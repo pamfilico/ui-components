@@ -4,3 +4,4 @@ export { MobileHeaderScrollToSectionButton } from "./MobileHeaderScrollToSection
 export type { MobileHeaderScrollToSectionButtonProps } from "./MobileHeaderScrollToSectionButton";
 export { MobileSectionNavigation } from "./MobileSectionNavigation";
 export type { MobileSectionNavigationProps, MobileSectionNavigationItem } from "./MobileSectionNavigation";
+export * from "./homepage";

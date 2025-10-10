@@ -20,6 +20,11 @@
       "import": "./dist/material/header/index.js",
       "require": "./dist/material/header/index.js"
     },
+    "./material/header/homepage": {
+      "types": "./dist/material/header/homepage/index.d.ts",
+      "import": "./dist/material/header/homepage/index.js",
+      "require": "./dist/material/header/homepage/index.js"
+    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js",
