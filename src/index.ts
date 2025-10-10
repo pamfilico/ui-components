@@ -1,6 +1,6 @@
 // Main entry point for @pamfilico/uicomponents
 // Export your components here
 
-// Example:
-// export * from "./material";
-// export * from "./components";
+export * from "./material/auth";
+export * from "./material/header";
+export * from "./utils";
