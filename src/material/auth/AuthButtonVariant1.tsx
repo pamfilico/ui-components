@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-export interface AuthButtonProps {
+export interface AuthButtonVariant1Props {
   /**
    * Session object containing user information
    */
@@ -36,10 +36,10 @@ export interface AuthButtonProps {
 }
 
 /**
- * AuthButton component that displays either a login or logout button
+ * AuthButtonVariant1 component that displays either a login or logout button
  * based on the session state
  */
-export const AuthButton: React.FC<AuthButtonProps> = ({
+export const AuthButtonVariant1: React.FC<AuthButtonVariant1Props> = ({
   session,
   onSignIn,
   onSignOut,

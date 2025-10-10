@@ -1,6 +1,10 @@
-export { HomePageHeaderDesktopComponent } from "./HomePageHeaderDesktopComponent";
-export type { HomePageHeaderDesktopComponentProps } from "./HomePageHeaderDesktopComponent";
-export { HomePageHeaderMobileComponent } from "./HomePageHeaderMobileComponent";
-export type { HomePageHeaderMobileComponentProps } from "./HomePageHeaderMobileComponent";
+export { HomePageHeaderVariant1Component } from "./HomePageHeaderVariant1Component";
+export type { HomePageHeaderVariant1ComponentProps } from "./HomePageHeaderVariant1Component";
+export { HomePageHeaderVariant2Component } from "./HomePageHeaderVariant2Component";
+export type { HomePageHeaderVariant2ComponentProps } from "./HomePageHeaderVariant2Component";
+export { HomePageHeaderVariant2TopLeftComponent } from "./HomePageHeaderVariant2TopLeftComponent";
+export type { HomePageHeaderVariant2TopLeftComponentProps } from "./HomePageHeaderVariant2TopLeftComponent";
+export { HomePageHeaderVariant2BottomLeftComponent } from "./HomePageHeaderVariant2BottomLeftComponent";
+export type { HomePageHeaderVariant2BottomLeftComponentProps } from "./HomePageHeaderVariant2BottomLeftComponent";
 export { HomePageHeaderParentComponent } from "./HomePageHeaderParentComponent";
 export type { HomePageHeaderParentComponentProps } from "./HomePageHeaderParentComponent";

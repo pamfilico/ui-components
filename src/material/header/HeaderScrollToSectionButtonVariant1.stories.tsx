@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { HeaderScrollToSectionButton } from "./HeaderScrollToSectionButton";
+import { HeaderScrollToSectionButtonVariant1 } from "./HeaderScrollToSectionButtonVariant1";
 import { Box, Typography } from "@mui/material";
 
 /**
- * HeaderScrollToSectionButton provides smooth scrolling navigation to different sections on a page.
+ * HeaderScrollToSectionButtonVariant1 provides smooth scrolling navigation to different sections on a page.
  * It's commonly used in single-page application headers for navigation.
  */
 const meta = {
-  title: "Material/Header/HeaderScrollToSectionButton",
-  component: HeaderScrollToSectionButton,
+  title: "Material/Header/HeaderScrollToSectionButtonVariant1",
+  component: HeaderScrollToSectionButtonVariant1,
   parameters: {
     layout: "centered",
   },
@@ -38,7 +38,7 @@ const meta = {
   args: {
     onClick: () => {},
   },
-} satisfies Meta<typeof HeaderScrollToSectionButton>;
+} satisfies Meta<typeof HeaderScrollToSectionButtonVariant1>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -102,20 +102,20 @@ export const NavigationBar: Story = {
   },
   render: (args) => (
     <Box sx={{ display: "flex", gap: 1, backgroundColor: "#1976d2", p: 2, borderRadius: 1 }}>
-      <HeaderScrollToSectionButton
+      <HeaderScrollToSectionButtonVariant1
         text="Home"
         sectionId="home"
         highlight={true}
       />
-      <HeaderScrollToSectionButton
+      <HeaderScrollToSectionButtonVariant1
         text="About"
         sectionId="about"
       />
-      <HeaderScrollToSectionButton
+      <HeaderScrollToSectionButtonVariant1
         text="Services"
         sectionId="services"
       />
-      <HeaderScrollToSectionButton
+      <HeaderScrollToSectionButtonVariant1
         text="Contact"
         sectionId="contact"
       />
@@ -134,15 +134,15 @@ export const WithScrollableSections: Story = {
   render: (args) => (
     <Box>
       <Box sx={{ position: "fixed", top: 0, left: 0, right: 0, backgroundColor: "#1976d2", p: 2, zIndex: 1000, display: "flex", gap: 1 }}>
-        <HeaderScrollToSectionButton
+        <HeaderScrollToSectionButtonVariant1
           text="Section 1"
           sectionId="section-1"
         />
-        <HeaderScrollToSectionButton
+        <HeaderScrollToSectionButtonVariant1
           text="Section 2"
           sectionId="section-2"
         />
-        <HeaderScrollToSectionButton
+        <HeaderScrollToSectionButtonVariant1
           text="Section 3"
           sectionId="section-3"
         />

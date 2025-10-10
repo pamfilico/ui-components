@@ -3,4 +3,5 @@
 
 export * from "./material/auth";
 export * from "./material/header";
+export * from "./material/home";
 export * from "./utils";

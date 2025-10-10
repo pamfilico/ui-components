@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { MobileSectionNavigation } from "./MobileSectionNavigation";
+import { SectionNavigationVariant1 } from "./SectionNavigationVariant1";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import ContactIcon from "@mui/icons-material/ContactMail";
 import { Box, Typography } from "@mui/material";
 
 /**
- * MobileSectionNavigation displays multiple floating action buttons for mobile navigation.
+ * SectionNavigationVariant1 displays multiple floating action buttons for navigation.
  * It accepts an array of navigation items and automatically sorts them by index.
  */
 const meta = {
-  title: "Material/Header/MobileSectionNavigation",
-  component: MobileSectionNavigation,
+  title: "Material/Header/SectionNavigationVariant1",
+  component: SectionNavigationVariant1,
   parameters: {
     layout: "fullscreen",
   },
@@ -29,7 +29,7 @@ const meta = {
   args: {
     onClick: () => {},
   },
-} satisfies Meta<typeof MobileSectionNavigation>;
+} satisfies Meta<typeof SectionNavigationVariant1>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -38,6 +38,11 @@ type Story = StoryObj<typeof meta>;
  * Default navigation with three sections
  */
 export const Default: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1",
+    },
+  },
   args: {
     items: [
       {
@@ -66,6 +71,11 @@ export const Default: Story = {
  * Multiple navigation items
  */
 export const MultipleItems: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1",
+    },
+  },
   args: {
     items: [
       {
@@ -94,6 +104,11 @@ export const MultipleItems: Story = {
  * Auto-sorting demonstration - items will be sorted by index
  */
 export const AutoSorted: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1",
+    },
+  },
   args: {
     items: [
       {
@@ -122,6 +137,11 @@ export const AutoSorted: Story = {
  * With scrollable sections for testing
  */
 export const WithScrollableSections: Story = {
+  parameters: {
+    viewport: {
+      defaultViewport: "mobile1",
+    },
+  },
   args: {
     items: [
       {
@@ -146,7 +166,7 @@ export const WithScrollableSections: Story = {
   },
   render: (args) => (
     <Box>
-      <MobileSectionNavigation {...args} />
+      <SectionNavigationVariant1 {...args} />
       <Box sx={{ mt: 15 }}>
         <Box id="section-1" sx={{ height: "50vh", backgroundColor: "#f0f0f0", p: 4, mb: 2 }}>
           <Typography variant="h4">Section 1</Typography>

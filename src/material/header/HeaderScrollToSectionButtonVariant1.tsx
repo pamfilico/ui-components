@@ -34,7 +34,7 @@ export interface HeaderScrollToSectionButtonProps {
  * HeaderScrollToSectionButton component that smoothly scrolls to a section on the page
  * Commonly used in navigation headers for single-page applications
  */
-export const HeaderScrollToSectionButton: React.FC<HeaderScrollToSectionButtonProps> = ({
+export const HeaderScrollToSectionButtonVariant1: React.FC<HeaderScrollToSectionButtonProps> = ({
   text,
   sectionId,
   highlight = false,

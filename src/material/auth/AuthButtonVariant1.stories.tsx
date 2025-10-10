@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { AuthButton } from "./AuthButton";
+import { AuthButtonVariant1 } from "./AuthButtonVariant1";
 
 /**
- * AuthButton displays either a login or logout button based on the session state.
+ * AuthButtonVariant1 displays either a login or logout button based on the session state.
  * It's commonly used in navigation headers and authentication flows.
  */
 const meta = {
-  title: "Material/Auth/AuthButton",
-  component: AuthButton,
+  title: "Material/Auth/AuthButtonVariant1",
+  component: AuthButtonVariant1,
   parameters: {
     layout: "centered",
   },
@@ -38,7 +38,7 @@ const meta = {
     onSignIn: () => {},
     onSignOut: () => {},
   },
-} satisfies Meta<typeof AuthButton>;
+} satisfies Meta<typeof AuthButtonVariant1>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -1,7 +1,7 @@
-export { HeaderScrollToSectionButton } from "./HeaderScrollToSectionButton";
-export type { HeaderScrollToSectionButtonProps } from "./HeaderScrollToSectionButton";
-export { MobileHeaderScrollToSectionButton } from "./MobileHeaderScrollToSectionButton";
-export type { MobileHeaderScrollToSectionButtonProps } from "./MobileHeaderScrollToSectionButton";
-export { MobileSectionNavigation } from "./MobileSectionNavigation";
-export type { MobileSectionNavigationProps, MobileSectionNavigationItem } from "./MobileSectionNavigation";
+export { HeaderScrollToSectionButtonVariant1 } from "./HeaderScrollToSectionButtonVariant1";
+export type { HeaderScrollToSectionButtonProps } from "./HeaderScrollToSectionButtonVariant1";
+export { HeaderScrollToSectionButtonVariant2 } from "./HeaderScrollToSectionButtonVariant2";
+export type { HeaderScrollToSectionButtonVariant2Props } from "./HeaderScrollToSectionButtonVariant2";
+export { SectionNavigationVariant1 } from "./SectionNavigationVariant1";
+export type { SectionNavigationVariant1Props, SectionNavigationVariant1Item } from "./SectionNavigationVariant1";
 export * from "./homepage";

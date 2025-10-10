@@ -1,6 +1,6 @@
 {
   "name": "@pamfilico/uicomponents",
-  "version": "0.0.11",
+  "version": "0.0.14",
   "description": "Reusable UI components for Material UI and other frameworks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -24,6 +24,11 @@
       "types": "./dist/material/header/homepage/index.d.ts",
       "import": "./dist/material/header/homepage/index.js",
       "require": "./dist/material/header/homepage/index.js"
+    },
+    "./material/home": {
+      "types": "./dist/material/home/index.d.ts",
+      "import": "./dist/material/home/index.js",
+      "require": "./dist/material/home/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",

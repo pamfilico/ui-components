@@ -1,14 +1,18 @@
 "use client";
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import { MobileHeaderScrollToSectionButton } from "./MobileHeaderScrollToSectionButton";
+import { HeaderScrollToSectionButtonVariant2 } from "./HeaderScrollToSectionButtonVariant2";
 import { scrollToSection } from "../../utils";
 
-export interface MobileSectionNavigationItem {
+export interface SectionNavigationVariant1Item {
   /**
-   * The icon to display in the FAB
+   * The text to display (for desktop variant)
    */
-  icon: React.ReactNode;
+  text?: string;
+  /**
+   * The icon to display in the FAB (for mobile variant)
+   */
+  icon?: React.ReactNode;
   /**
    * The ID of the section to scroll to
    */
@@ -16,7 +20,7 @@ export interface MobileSectionNavigationItem {
   /**
    * Tooltip text to display on hover
    */
-  tooltipText: string;
+  tooltipText?: string;
   /**
    * Index for sorting and positioning (will be sorted by this value)
    */
@@ -28,20 +32,15 @@ export interface MobileSectionNavigationItem {
   onClick?: (sectionId: string) => void;
 }
 
-export interface MobileSectionNavigationProps {
+export interface SectionNavigationVariant1Props {
   /**
    * Array of navigation items to display
    */
-  items: MobileSectionNavigationItem[];
+  items: SectionNavigationVariant1Item[];
   /**
    * Currently active section ID (optional)
    */
   activeSection?: string;
-  /**
-   * Orientation of the navigation buttons
-   * @default "vertical"
-   */
-  orientation?: "horizontal" | "vertical";
   /**
    * Callback function when a section button is clicked (optional)
    */
@@ -53,15 +52,14 @@ export interface MobileSectionNavigationProps {
 }
 
 /**
- * MobileSectionNavigation - A container for mobile navigation FABs
- * Displays multiple floating action buttons for section navigation on mobile devices
+ * SectionNavigationVariant1 - A container for navigation FABs
+ * Displays multiple floating action buttons for section navigation
  * Items are automatically sorted by their index property
  * Manages active section state and scrolling internally
  */
-export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = ({
+export const SectionNavigationVariant1: React.FC<SectionNavigationVariant1Props> = ({
   items,
   activeSection: externalActiveSection,
-  orientation = "vertical",
   onClick,
   sx,
 }) => {
@@ -90,7 +88,7 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
 
   const defaultSx = {
     display: "flex",
-    flexDirection: orientation === "vertical" ? "column" : "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -100,14 +98,12 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
   return (
     <Box sx={defaultSx}>
       {sortedItems.map((item, arrayIndex) => (
-        <MobileHeaderScrollToSectionButton
+        <HeaderScrollToSectionButtonVariant2
           key={item.sectionId}
-          icon={item.icon}
+          icon={item.icon || <></>}
           sectionId={item.sectionId}
-          index={item.index}
-          tooltip={item.tooltipText}
+          tooltip={item.tooltipText || item.text || ""}
           isActive={activeSection === item.sectionId}
-          orientation={orientation}
           onClick={(sectionId) => handleClick(sectionId, item.onClick)}
         />
       ))}

@@ -1,10 +1,19 @@
 "use client";
 import React from "react";
 import { AppBar, Toolbar, Box, Button, Avatar } from "@mui/material";
-import { AuthButton } from "../../auth";
-import { HeaderScrollToSectionButton } from "../HeaderScrollToSectionButton";
+import { AuthButtonVariant1 } from "../../auth";
+import { HeaderScrollToSectionButtonVariant1 } from "../HeaderScrollToSectionButtonVariant1";
 
-export interface HomePageHeaderDesktopComponentProps {
+export interface NavItem {
+  text?: string;
+  icon?: React.ReactNode;
+  sectionId: string;
+  tooltipText?: string;
+  index: number;
+  onClick?: (sectionId: string) => void;
+}
+
+export interface HomePageHeaderVariant1ComponentProps {
   session: {
     user?: {
       name?: string | null;
@@ -19,9 +28,10 @@ export interface HomePageHeaderDesktopComponentProps {
   logoSrc?: string;
   title?: string;
   appsButtonText?: string;
+  navItems?: NavItem[];
 }
 
-export const HomePageHeaderDesktopComponent: React.FC<HomePageHeaderDesktopComponentProps> = ({
+export const HomePageHeaderVariant1Component: React.FC<HomePageHeaderVariant1ComponentProps> = ({
   session,
   onSignIn,
   onSignOut,
@@ -30,7 +40,10 @@ export const HomePageHeaderDesktopComponent: React.FC<HomePageHeaderDesktopCompo
   logoSrc = "/icon.png",
   title = "Admin Panel",
   appsButtonText = "Go to Apps",
+  navItems = [{ text: "Home", sectionId: "herosection", index: 0 }],
 }) => {
+  const sortedNavItems = [...navItems].sort((a, b) => a.index - b.index);
+
   return (
     <>
       <AppBar position="fixed" sx={{ zIndex: 1300 }}>
@@ -63,10 +76,14 @@ export const HomePageHeaderDesktopComponent: React.FC<HomePageHeaderDesktopCompo
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <HeaderScrollToSectionButton
-            text="Home"
-            sectionId="herosection"
-          />
+          {sortedNavItems.map((item) => (
+            <HeaderScrollToSectionButtonVariant1
+              key={item.sectionId}
+              text={item.text || item.tooltipText || ""}
+              sectionId={item.sectionId}
+              onClick={item.onClick}
+            />
+          ))}
 
           <Box sx={{ flexGrow: 1 }} />
 
@@ -96,7 +113,7 @@ export const HomePageHeaderDesktopComponent: React.FC<HomePageHeaderDesktopCompo
                 {appsButtonText}
               </Button>
             )}
-            <AuthButton
+            <AuthButtonVariant1
               session={session}
               onSignIn={onSignIn}
               onSignOut={onSignOut}
