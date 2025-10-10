@@ -1,6 +1,6 @@
 {
   "name": "@pamfilico/uicomponents",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Reusable UI components for Material UI and other frameworks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
