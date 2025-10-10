@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip, Paper } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 
@@ -57,18 +57,34 @@ export const AuthButtonVariant2: React.FC<AuthButtonVariant2Props> = ({
   if (session) {
     return (
       <Tooltip title={logoutTooltip} arrow>
-        <IconButton sx={defaultSx} onClick={onSignOut} aria-label={logoutTooltip}>
-          <LogoutIcon />
-        </IconButton>
+        <Paper
+          elevation={3}
+          sx={{
+            borderRadius: "50%",
+            display: "inline-flex",
+          }}
+        >
+          <IconButton sx={defaultSx} onClick={onSignOut} aria-label={logoutTooltip}>
+            <LogoutIcon />
+          </IconButton>
+        </Paper>
       </Tooltip>
     );
   }
 
   return (
     <Tooltip title={loginTooltip} arrow>
-      <IconButton sx={defaultSx} onClick={onSignIn} aria-label={loginTooltip}>
-        <LoginIcon />
-      </IconButton>
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: "50%",
+          display: "inline-flex",
+        }}
+      >
+        <IconButton sx={defaultSx} onClick={onSignIn} aria-label={loginTooltip}>
+          <LoginIcon />
+        </IconButton>
+      </Paper>
     </Tooltip>
   );
 };

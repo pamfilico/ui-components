@@ -162,7 +162,6 @@ export const HomePageHeaderVariant2Component: React.FC<HomePageHeaderVariant2Com
       >
         <SectionNavigationVariant1
           items={navItems}
-          orientation={navigationOrientation}
           sx={
             navigationPlacement === "bottom-left"
               ? { flexDirection: "column-reverse" }
