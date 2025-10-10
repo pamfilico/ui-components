@@ -7,11 +7,11 @@ import React from 'react';
 
 // Initialize MSW with correct service worker path
 // Detect if running on GitHub Pages by checking the pathname
-const isGitHubPages = typeof window !== 'undefined' && window.location.pathname.startsWith('/uicomponents');
+const isGitHubPages = typeof window !== 'undefined' && window.location.pathname.startsWith('/ui-components');
 initialize({
   onUnhandledRequest: 'bypass',
   serviceWorker: {
-    url: isGitHubPages ? '/uicomponents/mockServiceWorker.js' : '/mockServiceWorker.js',
+    url: isGitHubPages ? '/ui-components/mockServiceWorker.js' : '/mockServiceWorker.js',
   },
 });
 
