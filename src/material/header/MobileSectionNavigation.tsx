@@ -21,6 +21,11 @@ export interface MobileSectionNavigationItem {
    * Index for sorting and positioning (will be sorted by this value)
    */
   index: number;
+  /**
+   * Optional onClick handler for this specific item
+   * If provided, overrides the default scrollToSection behavior
+   */
+  onClick?: (sectionId: string) => void;
 }
 
 export interface MobileSectionNavigationProps {
@@ -68,15 +73,17 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
   // Sort items by index
   const sortedItems = [...items].sort((a, b) => a.index - b.index);
 
-  const handleClick = (sectionId: string) => {
+  const handleClick = (sectionId: string, itemOnClick?: (sectionId: string) => void) => {
     // Update internal state
     setInternalActiveSection(sectionId);
 
-    // Call external onClick if provided
-    if (onClick) {
+    // Priority: item-specific onClick > global onClick > default scrollToSection
+    if (itemOnClick) {
+      itemOnClick(sectionId);
+    } else if (onClick) {
       onClick(sectionId);
     } else {
-      // Otherwise, scroll to section by default
+      // Default behavior: scroll to section
       scrollToSection(sectionId);
     }
   };
@@ -101,7 +108,7 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
           tooltip={item.tooltipText}
           isActive={activeSection === item.sectionId}
           orientation={orientation}
-          onClick={handleClick}
+          onClick={(sectionId) => handleClick(sectionId, item.onClick)}
         />
       ))}
     </Box>
