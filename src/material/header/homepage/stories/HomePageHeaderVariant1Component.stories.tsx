@@ -48,7 +48,7 @@ const defaultNavItems = [
 ];
 
 /**
- * Default desktop header
+ * Default desktop header (logged out)
  */
 export const Default: Story = {
   args: {
@@ -65,6 +65,67 @@ export const Default: Story = {
       <Box sx={{ height: "200vh", p: 4 }}>
         <Typography variant="h5" sx={{ mt: 10 }}>
           Desktop header with text navigation
+        </Typography>
+      </Box>
+    </Box>
+  ),
+};
+
+/**
+ * Logged in desktop header
+ */
+export const LoggedIn: Story = {
+  args: {
+    session: {
+      user: {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        image: "https://i.pravatar.cc/150?img=12",
+      },
+    },
+    navItems: defaultNavItems,
+    onSignIn: () => console.log("Sign in"),
+    onSignOut: () => console.log("Sign out"),
+    onLogoClick: () => console.log("Logo clicked"),
+    onAppsClick: () => console.log("Apps clicked"),
+  },
+  render: (args) => (
+    <Box>
+      <HomePageHeaderVariant1Component {...args} />
+      <Box sx={{ height: "200vh", p: 4 }}>
+        <Typography variant="h5" sx={{ mt: 10 }}>
+          Desktop header with logged in user
+        </Typography>
+      </Box>
+    </Box>
+  ),
+};
+
+/**
+ * Logged in desktop header without logo
+ */
+export const LoggedInNoLogo: Story = {
+  args: {
+    session: {
+      user: {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        image: "https://i.pravatar.cc/150?img=12",
+      },
+    },
+    navItems: defaultNavItems,
+    onSignIn: () => console.log("Sign in"),
+    onSignOut: () => console.log("Sign out"),
+    onLogoClick: () => console.log("Logo clicked"),
+    onAppsClick: () => console.log("Apps clicked"),
+    hideLogo: true,
+  },
+  render: (args) => (
+    <Box>
+      <HomePageHeaderVariant1Component {...args} />
+      <Box sx={{ height: "200vh", p: 4 }}>
+        <Typography variant="h5" sx={{ mt: 10 }}>
+          Desktop header with logged in user (no logo)
         </Typography>
       </Box>
     </Box>

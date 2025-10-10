@@ -37,6 +37,7 @@ export interface HomePageHeaderParentComponentProps {
   mobileToolbarMarginBottom?: number;
   desktopVariant?: React.ComponentType<any>;
   mobileVariant?: React.ComponentType<any>;
+  hideLogo?: boolean;
 }
 
 /**
@@ -59,6 +60,7 @@ export const HomePageHeaderParentComponent: React.FC<HomePageHeaderParentCompone
   mobileToolbarMarginBottom = 80,
   desktopVariant: DesktopVariant = HomePageHeaderVariant1Component,
   mobileVariant: MobileVariant,
+  hideLogo = false,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -83,6 +85,7 @@ export const HomePageHeaderParentComponent: React.FC<HomePageHeaderParentCompone
     title,
     appsButtonText,
     navItems,
+    hideLogo,
   };
 
   const mobileProps = {

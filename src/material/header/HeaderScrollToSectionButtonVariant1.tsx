@@ -60,11 +60,9 @@ export const HeaderScrollToSectionButtonVariant1: React.FC<HeaderScrollToSection
     borderRadius: 2,
     textTransform: capitalize ? "uppercase" : "none",
     backgroundColor: highlight ? "rgba(255, 255, 255, 0.2)" : "transparent",
-    color: highlight ? "primary.main" : "primary.main",
+    color: "#ffffff",
     "&:hover": {
-      backgroundColor: highlight
-        ? "rgba(255, 255, 255, 0.3)"
-        : "transparent",
+      backgroundColor: "rgba(255, 255, 255, 0.15)",
     },
     ...sx,
   };
