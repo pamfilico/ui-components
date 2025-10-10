@@ -1,2 +1,2 @@
-export { TrustedByApplicationsVariant1 } from "./TrustedByApplicationsVariant1";
-export type { TrustedByApplicationsVariant1Props, AppMetadata } from "./TrustedByApplicationsVariant1";
+export { TrustedByApplicationsSectionVariant1 } from "./TrustedByApplicationsSectionVariant1";
+export type { TrustedByApplicationsSectionVariant1Props } from "./TrustedByApplicationsSectionVariant1";

@@ -1,6 +1,6 @@
 {
   "name": "@pamfilico/uicomponents",
-  "version": "0.0.16",
+  "version": "0.0.22",
   "description": "Reusable UI components for Material UI and other frameworks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,6 +29,11 @@
       "types": "./dist/material/home/index.d.ts",
       "import": "./dist/material/home/index.js",
       "require": "./dist/material/home/index.js"
+    },
+    "./material/hero": {
+      "types": "./dist/material/hero/index.d.ts",
+      "import": "./dist/material/hero/index.js",
+      "require": "./dist/material/hero/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
