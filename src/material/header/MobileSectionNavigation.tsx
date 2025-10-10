@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@mui/material";
 import { MobileHeaderScrollToSectionButton } from "./MobileHeaderScrollToSectionButton";
+import { scrollToSection } from "../../utils";
 
 export interface MobileSectionNavigationItem {
   /**
@@ -50,16 +51,35 @@ export interface MobileSectionNavigationProps {
  * MobileSectionNavigation - A container for mobile navigation FABs
  * Displays multiple floating action buttons for section navigation on mobile devices
  * Items are automatically sorted by their index property
+ * Manages active section state and scrolling internally
  */
 export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = ({
   items,
-  activeSection,
+  activeSection: externalActiveSection,
   orientation = "vertical",
   onClick,
   sx,
 }) => {
+  const [internalActiveSection, setInternalActiveSection] = useState("");
+
+  // Use external activeSection if provided, otherwise use internal state
+  const activeSection = externalActiveSection ?? internalActiveSection;
+
   // Sort items by index
   const sortedItems = [...items].sort((a, b) => a.index - b.index);
+
+  const handleClick = (sectionId: string) => {
+    // Update internal state
+    setInternalActiveSection(sectionId);
+
+    // Call external onClick if provided
+    if (onClick) {
+      onClick(sectionId);
+    } else {
+      // Otherwise, scroll to section by default
+      scrollToSection(sectionId);
+    }
+  };
 
   const defaultSx = {
     display: "flex",
@@ -81,7 +101,7 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
           tooltip={item.tooltipText}
           isActive={activeSection === item.sectionId}
           orientation={orientation}
-          onClick={onClick}
+          onClick={handleClick}
         />
       ))}
     </Box>
