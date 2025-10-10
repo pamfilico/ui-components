@@ -3,6 +3,9 @@ import React from "react";
 import { useMediaQuery, useTheme } from "@mui/material";
 import { HomePageHeaderVariant1Component } from "./HomePageHeaderVariant1Component";
 import { HomePageHeaderVariant2TopLeftComponent } from "./HomePageHeaderVariant2TopLeftComponent";
+import { HomePageHeaderVariant2TopRightComponent } from "./HomePageHeaderVariant2TopRightComponent";
+import { HomePageHeaderVariant2BottomLeftComponent } from "./HomePageHeaderVariant2BottomLeftComponent";
+import { HomePageHeaderVariant2BottomRightComponent } from "./HomePageHeaderVariant2BottomRightComponent";
 
 export interface NavItem {
   text?: string;
@@ -29,7 +32,9 @@ export interface HomePageHeaderParentComponentProps {
   title?: string;
   appsButtonText?: string;
   navItems?: NavItem[];
+  mobileToolbarPlacement?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
   mobileToolbarMarginTop?: number;
+  mobileToolbarMarginBottom?: number;
   desktopVariant?: React.ComponentType<any>;
   mobileVariant?: React.ComponentType<any>;
 }
@@ -49,12 +54,24 @@ export const HomePageHeaderParentComponent: React.FC<HomePageHeaderParentCompone
   title,
   appsButtonText,
   navItems,
+  mobileToolbarPlacement = "top-left",
   mobileToolbarMarginTop = 80,
+  mobileToolbarMarginBottom = 80,
   desktopVariant: DesktopVariant = HomePageHeaderVariant1Component,
-  mobileVariant: MobileVariant = HomePageHeaderVariant2TopLeftComponent,
+  mobileVariant: MobileVariant,
 }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  // Determine mobile variant based on placement if not explicitly provided
+  const placementVariantMap = {
+    "top-left": HomePageHeaderVariant2TopLeftComponent,
+    "top-right": HomePageHeaderVariant2TopRightComponent,
+    "bottom-left": HomePageHeaderVariant2BottomLeftComponent,
+    "bottom-right": HomePageHeaderVariant2BottomRightComponent,
+  };
+
+  const MobileVariantComponent = MobileVariant || placementVariantMap[mobileToolbarPlacement];
 
   const desktopProps = {
     session,
@@ -76,6 +93,7 @@ export const HomePageHeaderParentComponent: React.FC<HomePageHeaderParentCompone
     actionText: appsButtonText,
     navItems,
     navigationMarginTop: mobileToolbarMarginTop,
+    navigationMarginBottom: mobileToolbarMarginBottom,
   };
 
   return (
@@ -83,7 +101,7 @@ export const HomePageHeaderParentComponent: React.FC<HomePageHeaderParentCompone
       {!isMobile ? (
         <DesktopVariant {...desktopProps} />
       ) : (
-        <MobileVariant {...mobileProps} />
+        <MobileVariantComponent {...mobileProps} />
       )}
     </>
   );

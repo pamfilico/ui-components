@@ -4,7 +4,11 @@ export { HomePageHeaderVariant2Component } from "./HomePageHeaderVariant2Compone
 export type { HomePageHeaderVariant2ComponentProps } from "./HomePageHeaderVariant2Component";
 export { HomePageHeaderVariant2TopLeftComponent } from "./HomePageHeaderVariant2TopLeftComponent";
 export type { HomePageHeaderVariant2TopLeftComponentProps } from "./HomePageHeaderVariant2TopLeftComponent";
+export { HomePageHeaderVariant2TopRightComponent } from "./HomePageHeaderVariant2TopRightComponent";
+export type { HomePageHeaderVariant2TopRightComponentProps } from "./HomePageHeaderVariant2TopRightComponent";
 export { HomePageHeaderVariant2BottomLeftComponent } from "./HomePageHeaderVariant2BottomLeftComponent";
 export type { HomePageHeaderVariant2BottomLeftComponentProps } from "./HomePageHeaderVariant2BottomLeftComponent";
+export { HomePageHeaderVariant2BottomRightComponent } from "./HomePageHeaderVariant2BottomRightComponent";
+export type { HomePageHeaderVariant2BottomRightComponentProps } from "./HomePageHeaderVariant2BottomRightComponent";
 export { HomePageHeaderParentComponent } from "./HomePageHeaderParentComponent";
 export type { HomePageHeaderParentComponentProps } from "./HomePageHeaderParentComponent";
