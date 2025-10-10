@@ -32,6 +32,11 @@ export interface MobileSectionNavigationProps {
    */
   activeSection?: string;
   /**
+   * Orientation of the navigation buttons
+   * @default "vertical"
+   */
+  orientation?: "horizontal" | "vertical";
+  /**
    * Callback function when a section button is clicked (optional)
    */
   onClick?: (sectionId: string) => void;
@@ -49,6 +54,7 @@ export interface MobileSectionNavigationProps {
 export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = ({
   items,
   activeSection,
+  orientation = "vertical",
   onClick,
   sx,
 }) => {
@@ -57,6 +63,7 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
 
   const defaultSx = {
     display: "flex",
+    flexDirection: orientation === "vertical" ? "column" : "row",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
@@ -73,6 +80,7 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
           index={item.index}
           tooltip={item.tooltipText}
           isActive={activeSection === item.sectionId}
+          orientation={orientation}
           onClick={onClick}
         />
       ))}

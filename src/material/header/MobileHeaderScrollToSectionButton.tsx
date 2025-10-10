@@ -25,6 +25,11 @@ export interface MobileHeaderScrollToSectionButtonProps {
    */
   isActive?: boolean;
   /**
+   * Orientation of the button positioning
+   * @default "vertical"
+   */
+  orientation?: "horizontal" | "vertical";
+  /**
    * Custom styles for the FAB
    */
   sx?: any;
@@ -44,6 +49,7 @@ export const MobileHeaderScrollToSectionButton: React.FC<MobileHeaderScrollToSec
   index,
   tooltip,
   isActive = false,
+  orientation = "vertical",
   sx,
   onClick,
 }) => {
@@ -55,20 +61,34 @@ export const MobileHeaderScrollToSectionButton: React.FC<MobileHeaderScrollToSec
     }
   };
 
-  const defaultSx = {
-    position: "fixed",
-    top: "12%",
-    left: `calc(10% + ${index * 56}px)`,
-    transform: "translateX(-50%)",
-    mt: 0,
-    marginHorizontal: 5,
-    display: { xs: "flex", md: "none" },
-    backgroundColor: isActive ? "secondary.main" : "primary.main",
-    "&:hover": {
-      backgroundColor: isActive ? "secondary.dark" : "primary.dark",
-    },
-    ...sx,
-  };
+  const defaultSx = orientation === "vertical"
+    ? {
+        position: "fixed",
+        top: `calc(12% + ${index * 56}px)`,
+        left: "5%",
+        transform: "translateY(0)",
+        mt: 0,
+        display: { xs: "flex", md: "none" },
+        backgroundColor: isActive ? "secondary.main" : "primary.main",
+        "&:hover": {
+          backgroundColor: isActive ? "secondary.dark" : "primary.dark",
+        },
+        ...sx,
+      }
+    : {
+        position: "fixed",
+        top: "12%",
+        left: `calc(10% + ${index * 56}px)`,
+        transform: "translateX(-50%)",
+        mt: 0,
+        marginHorizontal: 5,
+        display: { xs: "flex", md: "none" },
+        backgroundColor: isActive ? "secondary.main" : "primary.main",
+        "&:hover": {
+          backgroundColor: isActive ? "secondary.dark" : "primary.dark",
+        },
+        ...sx,
+      };
 
   return (
     <Tooltip title={tooltip} arrow>
