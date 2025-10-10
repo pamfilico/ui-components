@@ -44,21 +44,18 @@ export const Default: Story = {
         icon: <HomeIcon />,
         sectionId: "home",
         tooltipText: "Home",
-        isActive: true,
         index: 0,
       },
       {
         icon: <InfoIcon />,
         sectionId: "about",
         tooltipText: "About",
-        isActive: false,
         index: 1,
       },
       {
         icon: <ContactIcon />,
         sectionId: "contact",
         tooltipText: "Contact",
-        isActive: false,
         index: 2,
       },
     ],
@@ -66,30 +63,27 @@ export const Default: Story = {
 };
 
 /**
- * Navigation with active state on second item
+ * Multiple navigation items
  */
-export const SecondItemActive: Story = {
+export const MultipleItems: Story = {
   args: {
     items: [
       {
         icon: <HomeIcon />,
         sectionId: "home",
         tooltipText: "Home",
-        isActive: false,
         index: 0,
       },
       {
         icon: <InfoIcon />,
         sectionId: "about",
         tooltipText: "About",
-        isActive: true,
         index: 1,
       },
       {
         icon: <ContactIcon />,
         sectionId: "contact",
         tooltipText: "Contact",
-        isActive: false,
         index: 2,
       },
     ],
@@ -106,21 +100,18 @@ export const AutoSorted: Story = {
         icon: <ContactIcon />,
         sectionId: "contact",
         tooltipText: "Contact (index 2)",
-        isActive: false,
         index: 2,
       },
       {
         icon: <HomeIcon />,
         sectionId: "home",
         tooltipText: "Home (index 0)",
-        isActive: true,
         index: 0,
       },
       {
         icon: <InfoIcon />,
         sectionId: "about",
         tooltipText: "About (index 1)",
-        isActive: false,
         index: 1,
       },
     ],
@@ -137,21 +128,18 @@ export const WithScrollableSections: Story = {
         icon: <HomeIcon />,
         sectionId: "section-1",
         tooltipText: "Section 1",
-        isActive: true,
         index: 0,
       },
       {
         icon: <InfoIcon />,
         sectionId: "section-2",
         tooltipText: "Section 2",
-        isActive: false,
         index: 1,
       },
       {
         icon: <ContactIcon />,
         sectionId: "section-3",
         tooltipText: "Section 3",
-        isActive: false,
         index: 2,
       },
     ],

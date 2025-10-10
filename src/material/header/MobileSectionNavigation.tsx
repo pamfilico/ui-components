@@ -17,10 +17,6 @@ export interface MobileSectionNavigationItem {
    */
   tooltipText: string;
   /**
-   * Whether this button is in active state
-   */
-  isActive?: boolean;
-  /**
    * Index for sorting and positioning (will be sorted by this value)
    */
   index: number;
@@ -71,7 +67,6 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
           sectionId={item.sectionId}
           index={item.index}
           tooltip={item.tooltipText}
-          isActive={item.isActive}
           onClick={onClick}
         />
       ))}
