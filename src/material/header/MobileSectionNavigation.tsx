@@ -28,6 +28,10 @@ export interface MobileSectionNavigationProps {
    */
   items: MobileSectionNavigationItem[];
   /**
+   * Currently active section ID (optional)
+   */
+  activeSection?: string;
+  /**
    * Callback function when a section button is clicked (optional)
    */
   onClick?: (sectionId: string) => void;
@@ -44,6 +48,7 @@ export interface MobileSectionNavigationProps {
  */
 export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = ({
   items,
+  activeSection,
   onClick,
   sx,
 }) => {
@@ -67,6 +72,7 @@ export const MobileSectionNavigation: React.FC<MobileSectionNavigationProps> = (
           sectionId={item.sectionId}
           index={item.index}
           tooltip={item.tooltipText}
+          isActive={activeSection === item.sectionId}
           onClick={onClick}
         />
       ))}
