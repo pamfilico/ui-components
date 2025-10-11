@@ -16,7 +16,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // Wrapper to handle dialog state for stories
-const DialogWrapper = (args: Omit<React.ComponentProps<typeof MessageDialogComponentVariant1>, 'open' | 'onClose'>) => {
+const DialogWrapper = (args: any) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,7 +36,7 @@ export const Default: Story = {
     message: "This is a simple message dialog with plain text.",
     useMarkdown: false,
     closeButtonText: "Close",
-  },
+  } as any,
 };
 
 export const WithMarkdown: Story = {
@@ -58,7 +58,7 @@ Our pricing model is simple and fair:
 Minimum monthly charge: **10€**`,
     useMarkdown: true,
     closeButtonText: "Got it",
-  },
+  } as any,
 };
 
 export const NoTitle: Story = {
@@ -67,7 +67,7 @@ export const NoTitle: Story = {
     message: "This dialog has no title, just a message.",
     useMarkdown: false,
     closeButtonText: "Close",
-  },
+  } as any,
 };
 
 export const LongContent: Story = {
@@ -91,7 +91,7 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`,
     useMarkdown: true,
     closeButtonText: "Accept",
-  },
+  } as any,
 };
 
 export const CustomButtonText: Story = {
@@ -101,5 +101,5 @@ export const CustomButtonText: Story = {
     message: "Are you sure you want to proceed with this action?",
     useMarkdown: false,
     closeButtonText: "OK, I understand",
-  },
+  } as any,
 };

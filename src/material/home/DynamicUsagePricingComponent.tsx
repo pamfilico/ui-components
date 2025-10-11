@@ -10,14 +10,14 @@ interface DynamicUsagePricingParentConfig {
 
 interface DynamicUsagePricingComponentProps {
   defaultConfig: DynamicUsagePricingParentConfig;
-  locale: "en" | "el";
+  locale: string;
   variant: 1 | 2;
   fromServerUrl?: string;
 }
 
 async function fetchPricingConfig(
   url: string,
-  locale: "en" | "el"
+  locale: string
 ): Promise<PricingConfig | null> {
   try {
     const response = await fetch(`${url}/${locale}`, {
@@ -45,7 +45,9 @@ const DynamicUsagePricingComponent = async ({
   variant,
   fromServerUrl,
 }: DynamicUsagePricingComponentProps) => {
-  let childConfig = defaultConfig[locale];
+  // Fallback to 'en' if locale is not 'en' or 'el'
+  const safeLocale = (locale === "en" || locale === "el") ? locale : "en";
+  let childConfig = defaultConfig[safeLocale];
 
   // Try to fetch from server if URL is provided
   if (fromServerUrl) {
@@ -57,10 +59,10 @@ const DynamicUsagePricingComponent = async ({
   }
 
   if (variant === 2) {
-    return <DynamicUsagePricingComponentVariant2 config={childConfig} locale={locale} />;
+    return <DynamicUsagePricingComponentVariant2 config={childConfig} locale={safeLocale} />;
   }
 
-  return <DynamicUsagePricingComponentVariant1 config={childConfig} locale={locale} />;
+  return <DynamicUsagePricingComponentVariant1 config={childConfig} locale={safeLocale} />;
 };
 
 export { DynamicUsagePricingComponent };
