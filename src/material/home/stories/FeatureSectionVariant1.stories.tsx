@@ -18,6 +18,9 @@ const sampleFeatures = [
     id: "1",
     title: "Fast Performance",
     description: "Lightning-fast load times and optimized performance for the best user experience.",
+    image: "https://placehold.co/600x400",
+    imageWidth: 400,
+    imageHeight: 200,
   },
   {
     id: "2",

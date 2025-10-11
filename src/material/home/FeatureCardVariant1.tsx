@@ -1,11 +1,15 @@
 "use client";
 import React from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
+import ReactMarkdown from "react-markdown";
 
 export interface Feature {
   id: string;
   title: string;
   description: string;
+  image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   [key: string]: any;
 }
 
@@ -21,7 +25,6 @@ export const FeatureCardVariant1: React.FC<FeatureCardVariant1Props> = ({ featur
   return (
     <Card
       sx={{
-        height: "100%",
         display: "flex",
         flexDirection: "column",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -31,18 +34,39 @@ export const FeatureCardVariant1: React.FC<FeatureCardVariant1Props> = ({ featur
         },
       }}
     >
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent sx={{ pb: feature.image ? 0 : undefined }}>
         <Typography
           variant="h6"
           component="h3"
-          gutterBottom
+          gutterBottom={!feature.image}
           sx={{ fontWeight: 600 }}
         >
           {feature.title}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+      </CardContent>
+      {feature.image && (
+        <img
+          src={feature.image}
+          alt={feature.title}
+          style={{
+            width: '100%',
+            height: feature.imageHeight ? `${feature.imageHeight}px` : 'auto',
+            display: 'block'
+          }}
+        />
+      )}
+      <CardContent sx={{ pt: feature.image ? 0 : undefined, flexGrow: 1 }}>
+        <ReactMarkdown
+          components={{
+            p: ({ children }) => (
+              <Typography variant="body2" color="text.secondary" component="div" sx={{ mt: 1 }}>
+                {children}
+              </Typography>
+            ),
+          }}
+        >
           {feature.description}
-        </Typography>
+        </ReactMarkdown>
       </CardContent>
     </Card>
   );
