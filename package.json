@@ -102,6 +102,7 @@
     ]
   },
   "dependencies": {
-    "@pamfilico/uicomponents": "^0.0.32"
+    "@pamfilico/uicomponents": "^0.0.32",
+    "react-markdown": "^10.1.0"
   }
 }
