@@ -1,0 +1,11 @@
+{
+  "DynamicUsagePricingComponentVariant1": {
+    "quick_pricing_compute": "Quick Pricing Compute",
+    "max_monthly_price": "Max Monthly Price",
+    "see_terms": "See Terms",
+    "pricing_explanation": "Quick Explanation"
+  },
+  "MessageDialogComponentVariant1": {
+    "close": "Close"
+  }
+}

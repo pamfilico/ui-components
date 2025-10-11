@@ -1,19 +1,18 @@
 "use client";
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Slider,
-  Paper,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Slider, Paper, IconButton } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import Markdown from "react-markdown";
+import { MessageDialogComponentVariant1 } from "../dialogs/MessageDialogComponentVariant1";
+import { createTranslator } from "../../utils/translations";
+
+// Import translation files
+import enMessages from "../../../public/messages/en.json";
+import elMessages from "../../../public/messages/el.json";
+
+const translations = {
+  en: enMessages,
+  el: elMessages,
+};
 
 interface Resource {
   name: string;
@@ -26,54 +25,50 @@ interface Resources {
   [key: string]: Resource;
 }
 
-interface Router {
-  push: (path: string) => void;
-}
-
-interface TranslationFunction {
-  (key: string): string;
-}
-
-interface GenericPricingSectionProps {
+interface PricingConfig {
   minPrice: number;
   resources: Resources;
   pricing_explanation: string;
-  router?: Router;
-  t?: TranslationFunction;
 }
 
-const GenericPricingSection: React.FC<GenericPricingSectionProps> = ({
-  minPrice,
-  resources,
-  pricing_explanation,
-  router,
-  t,
-}) => {
-  const fallbackTranslations: { [key: string]: string } = {
-    "pricing.quick_pricing_compute": "Quick Pricing Compute",
-    "pricing.max_monthly_price": "Max Monthly Price",
-    "pricing.see_terms": "See Terms",
-    "pricing.pricing_explanation": "Quick Explanation",
-  };
-  const translate = (key: string): string =>
-    (t && t(key)) || fallbackTranslations[key] || "Missing Translation";
+interface DynamicUsagePricingComponentVariant1Props {
+  config: PricingConfig;
+  locale: "en" | "el";
+}
 
-  const initialQuantities = Object.keys(resources).reduce((acc: { [key: string]: number }, key) => {
-    acc[key] = 0;
-    return acc;
-  }, {});
-  const [quantities, setQuantities] = useState<{ [key: string]: number }>(initialQuantities);
+const DynamicUsagePricingComponentVariant1: React.FC<
+  DynamicUsagePricingComponentVariant1Props
+> = ({ config, locale }) => {
+  const { minPrice, resources, pricing_explanation } = config;
+  const translator = createTranslator(
+    "DynamicUsagePricingComponentVariant1",
+    locale,
+    translations
+  );
+  const translate = (key: string) => translator.t(key);
+
+  const initialQuantities = Object.keys(resources).reduce(
+    (acc: { [key: string]: number }, key) => {
+      acc[key] = 0;
+      return acc;
+    },
+    {}
+  );
+  const [quantities, setQuantities] = useState<{ [key: string]: number }>(
+    initialQuantities
+  );
   // State to track which resource's explanation dialog is open.
   const [openExplanation, setOpenExplanation] = useState<string | null>(null);
   const [openQuickExplanation, updateOpenQuickExplanation] = useState(false);
 
   // Update quantity when slider value changes.
-  const handleSliderChange = (key: string) => (_event: Event, newValue: number | number[]) => {
-    setQuantities({
-      ...quantities,
-      [key]: typeof newValue === 'number' ? newValue : newValue[0],
-    });
-  };
+  const handleSliderChange =
+    (key: string) => (_event: Event, newValue: number | number[]) => {
+      setQuantities({
+        ...quantities,
+        [key]: typeof newValue === "number" ? newValue : newValue[0],
+      });
+    };
 
   // Calculate the cost for the resources used.
   const resourceCost = Object.keys(quantities).reduce((total, key) => {
@@ -111,19 +106,16 @@ const GenericPricingSection: React.FC<GenericPricingSectionProps> = ({
         }}
       >
         <Typography variant="h5" gutterBottom textAlign="center">
-          {translate("pricing.quick_pricing_compute")}
-          {t && router && (
-            <Button onClick={() => router.push("/terms")}>
-              {translate("pricing.see_terms")}
-            </Button>
-          )}
+          {translate("quick_pricing_compute")}
         </Typography>
 
         <Box sx={{ mt: 2 }}>
           {Object.keys(resources).map((key) => (
             <Box key={key} sx={{ mb: 3 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                <Box sx={{ flex: '1 1 60%' }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1 }}
+              >
+                <Box sx={{ flex: "1 1 60%" }}>
                   <Typography id={`${key}-slider`} gutterBottom>
                     {resources[key].name} ({quantities[key]})
                   </Typography>
@@ -146,7 +138,13 @@ const GenericPricingSection: React.FC<GenericPricingSectionProps> = ({
                     <HelpOutlineIcon fontSize="small" />
                   </IconButton>
                 </Box>
-                <Box sx={{ flex: '0 0 auto', minWidth: '80px', textAlign: 'right' }}>
+                <Box
+                  sx={{
+                    flex: "0 0 auto",
+                    minWidth: "80px",
+                    textAlign: "right",
+                  }}
+                >
                   <Typography variant="body2" color="text.secondary">
                     {resources[key].price_per_item} €/unit
                   </Typography>
@@ -168,24 +166,20 @@ const GenericPricingSection: React.FC<GenericPricingSectionProps> = ({
 
         <Box sx={{ mt: 3, textAlign: "center" }}>
           <Typography variant="h6">
-            {translate("pricing.max_monthly_price")}: {totalPrice.toFixed(2)} €
+            {translate("max_monthly_price")}: {totalPrice.toFixed(2)} €
           </Typography>
         </Box>
 
         {/* Pricing Explanation */}
         <Box
           sx={{
-            // mt: 4,
             p: 2,
-            // border: "1px solid",
-            // borderColor: "divider",
-            // borderRadius: 1,
             justifyContent: "center",
             display: "flex",
           }}
         >
           <Typography variant="subtitle1" gutterBottom>
-            {translate("pricing.pricing_explanation")}:
+            {translate("pricing_explanation")}:
           </Typography>
           <IconButton
             onClick={() => updateOpenQuickExplanation(true)}
@@ -197,40 +191,30 @@ const GenericPricingSection: React.FC<GenericPricingSectionProps> = ({
       </Paper>
 
       {/* Resource-specific Explanation Dialog */}
-      <Dialog open={openExplanation !== null} onClose={handleCloseDialog}>
-        <DialogTitle>
-          {openExplanation ? resources[openExplanation].name : ""} Explanation
-        </DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="body2" color="text.secondary">
-            {openExplanation ? resources[openExplanation].explanation : ""}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Close</Button>
-        </DialogActions>
-      </Dialog>
+      <MessageDialogComponentVariant1
+        open={openExplanation !== null}
+        onClose={handleCloseDialog}
+        title={
+          openExplanation
+            ? `${resources[openExplanation].name} Explanation`
+            : ""
+        }
+        message={openExplanation ? resources[openExplanation].explanation : ""}
+        useMarkdown={false}
+        locale={locale}
+      />
 
-      {/* Resource-specific Explanation Dialog */}
-      <Dialog
+      {/* Pricing Explanation Dialog */}
+      <MessageDialogComponentVariant1
         open={openQuickExplanation}
         onClose={() => updateOpenQuickExplanation(false)}
-      >
-        {/* <DialogTitle>
-          {openExplanation ? resources[openExplanation].name : ""} Explanation
-        </DialogTitle> */}
-        <DialogContent dividers>
-          <Markdown>{pricing_explanation}</Markdown>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => updateOpenQuickExplanation(false)}>
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+        message={pricing_explanation}
+        useMarkdown={true}
+        locale={locale}
+      />
     </Box>
   );
 };
 
-export { GenericPricingSection };
-export type { GenericPricingSectionProps, Resource, Resources };
+export { DynamicUsagePricingComponentVariant1 };
+export type { DynamicUsagePricingComponentVariant1Props, PricingConfig, Resource, Resources };

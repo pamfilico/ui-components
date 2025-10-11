@@ -6,5 +6,15 @@ export { FeatureSectionVariant1 } from "./FeatureSectionVariant1";
 export type { FeatureSectionVariant1Props } from "./FeatureSectionVariant1";
 export { FaqSectionVariant1 } from "./FaqSectionVariant1";
 export type { FaqSectionVariant1Props, FaqItem } from "./FaqSectionVariant1";
-export { GenericPricingSection } from "./GenericPricingSection";
-export type { GenericPricingSectionProps, Resource, Resources } from "./GenericPricingSection";
+export { DynamicUsagePricingComponent } from "./DynamicUsagePricingComponent";
+export type {
+  DynamicUsagePricingComponentProps,
+  DynamicUsagePricingParentConfig,
+  PricingConfig,
+  Resource,
+  Resources,
+} from "./DynamicUsagePricingComponent";
+export { DynamicUsagePricingComponentVariant1 } from "./DynamicUsagePricingComponentVariant1";
+export type { DynamicUsagePricingComponentVariant1Props } from "./DynamicUsagePricingComponentVariant1";
+export { DynamicUsagePricingComponentVariant2 } from "./DynamicUsagePricingComponentVariant2";
+export type { DynamicUsagePricingComponentVariant2Props } from "./DynamicUsagePricingComponentVariant2";

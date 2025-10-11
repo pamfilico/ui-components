@@ -1,0 +1,11 @@
+{
+  "DynamicUsagePricingComponentVariant1": {
+    "quick_pricing_compute": "Γρήγορος Υπολογισμός Τιμολόγησης",
+    "max_monthly_price": "Μέγιστη Μηνιαία Τιμή",
+    "see_terms": "Δείτε τους Όρους",
+    "pricing_explanation": "Σύντομη Επεξήγηση"
+  },
+  "MessageDialogComponentVariant1": {
+    "close": "Κλείσιμο"
+  }
+}
