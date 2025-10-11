@@ -6,3 +6,5 @@ export { FeatureSectionVariant1 } from "./FeatureSectionVariant1";
 export type { FeatureSectionVariant1Props } from "./FeatureSectionVariant1";
 export { FaqSectionVariant1 } from "./FaqSectionVariant1";
 export type { FaqSectionVariant1Props, FaqItem } from "./FaqSectionVariant1";
+export { GenericPricingSection } from "./GenericPricingSection";
+export type { GenericPricingSectionProps, Resource, Resources } from "./GenericPricingSection";
