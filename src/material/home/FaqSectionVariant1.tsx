@@ -66,7 +66,6 @@ export const FaqSectionVariant1: React.FC<FaqSectionVariant1Props> = ({
             <Typography
               variant="h2"
               sx={{
-                color: "white",
                 fontWeight: 700,
                 mb: { xs: 4, md: 0 },
               }}
@@ -85,32 +84,31 @@ export const FaqSectionVariant1: React.FC<FaqSectionVariant1Props> = ({
                 sx={{ mb: 2 }}
               >
                 <AccordionSummary
-                  expandIcon={<AddIcon sx={{ color: "#000000" }} />}
+                  expandIcon={<AddIcon />}
                   aria-controls={`panel${index}-content`}
                   id={`panel${index}-header`}
-                  sx={{ backgroundColor: "#FFFFFF" }}
                 >
                   <Typography
-                    sx={{ color: "#000000", fontWeight: "bold" }}
+                    sx={{ fontWeight: "bold" }}
                     align="left"
                   >
                     {faq.title}
                   </Typography>
                 </AccordionSummary>
-                <AccordionDetails sx={{ backgroundColor: "#FFFFFF" }}>
+                <AccordionDetails>
                   <Box
                     display="flex"
                     flexDirection="column"
                     alignItems="flex-start"
                   >
-                    <Typography style={{ color: "#000000" }} align="left">
+                    <Typography align="left">
                       {faq.description}
                     </Typography>
                     {faq.demo_section_id && (
                       <Box display="flex" flexDirection="row" alignItems="flex-start">
                         <Button
                           variant="contained"
-                          sx={{ color: "#000000", mt: 2, mr: 2 }}
+                          sx={{ mt: 2, mr: 2 }}
                           onClick={() => scrollToSection(faq.demo_section_id!)}
                         >
                           {demoButtonText}
