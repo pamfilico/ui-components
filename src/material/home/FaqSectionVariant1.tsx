@@ -25,8 +25,9 @@ export interface FaqSectionVariant1Props {
   title?: string;
   items: FaqItem[];
   section_id?: string;
-  backgroundColor?: string;
   demoButtonText?: string;
+  path?: string;
+  is_section?: boolean;
 }
 
 /**
@@ -37,8 +38,9 @@ export const FaqSectionVariant1: React.FC<FaqSectionVariant1Props> = ({
   title = "Frequently Asked Questions",
   items,
   section_id = "faq_section",
-  backgroundColor = "#0f0f23",
   demoButtonText = "See Demo",
+  path,
+  is_section,
 }) => {
   const [expanded, setExpanded] = useState<string | false>(false);
 
@@ -54,7 +56,6 @@ export const FaqSectionVariant1: React.FC<FaqSectionVariant1Props> = ({
         flexDirection: "column",
         justifyContent: "center",
         py: { xs: 4, md: 8 },
-        backgroundColor,
       }}
       id={section_id}
     >
