@@ -100,5 +100,8 @@
     "workerDirectory": [
       "public"
     ]
+  },
+  "dependencies": {
+    "@pamfilico/uicomponents": "^0.0.32"
   }
 }
