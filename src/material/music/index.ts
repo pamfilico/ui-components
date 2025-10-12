@@ -7,5 +7,11 @@ export type { ParsedChord, ChordEditorComponentProps } from "./ChordEditorCompon
 export { default as ReadOnlyBlockNoteViewer } from "./ReadOnlyBlockNoteViewer";
 export type { ReadOnlyBlockNoteViewerProps } from "./ReadOnlyBlockNoteViewer";
 
+export { default as SelectItemServerVariant1 } from "./SelectItemServerVariant1";
+export type { SelectItemServerVariant1Props } from "./SelectItemServerVariant1";
+
+export { default as SaveVersionComponent } from "./SaveVersionComponent";
+export type { SaveVersionComponentProps } from "./SaveVersionComponent";
+
 // Export utils for convenience
 export * from "./utils";
