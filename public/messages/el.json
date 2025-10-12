@@ -7,5 +7,16 @@
   },
   "MessageDialogComponentVariant1": {
     "close": "Κλείσιμο"
+  },
+  "QRCode": {
+    "generating": "Δημιουργία QR κώδικα...",
+    "failedToGenerate": "Αποτυχία δημιουργίας QR κώδικα",
+    "urlCopied": "Η διεύθυνση URL αντιγράφηκε",
+    "failedToCopy": "Αποτυχία αντιγραφής URL",
+    "shareTitle": "Κοινοποίηση Προφίλ",
+    "qrCodeAlt": "QR Κώδικας",
+    "scanToVisit": "Σαρώστε για επίσκεψη προφίλ",
+    "copyUrl": "Αντιγραφή URL",
+    "share": "Κοινοποίηση"
   }
 }

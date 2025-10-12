@@ -45,6 +45,11 @@
       "import": "./dist/material/music/utils.js",
       "require": "./dist/material/music/utils.js"
     },
+    "./material/misc": {
+      "types": "./dist/material/misc/index.d.ts",
+      "import": "./dist/material/misc/index.js",
+      "require": "./dist/material/misc/index.js"
+    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js",
@@ -94,6 +99,7 @@
     "@storybook/addon-vitest": "^9.1.10",
     "@storybook/nextjs": "^9.1.10",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "gh-pages": "^6.3.0",
@@ -118,6 +124,7 @@
     "@mantine/core": "^7.17.8",
     "@mantine/hooks": "^7.17.8",
     "@tiptap/extensions": "^3.6.6",
+    "qrcode": "^1.5.4",
     "react-markdown": "^10.1.0"
   }
 }

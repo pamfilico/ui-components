@@ -7,5 +7,16 @@
   },
   "MessageDialogComponentVariant1": {
     "close": "Close"
+  },
+  "QRCode": {
+    "generating": "Generating QR code...",
+    "failedToGenerate": "Failed to generate QR code",
+    "urlCopied": "URL copied to clipboard",
+    "failedToCopy": "Failed to copy URL",
+    "shareTitle": "Share Profile",
+    "qrCodeAlt": "QR Code",
+    "scanToVisit": "Scan to visit profile",
+    "copyUrl": "Copy URL",
+    "share": "Share"
   }
 }
