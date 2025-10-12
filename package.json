@@ -1,6 +1,6 @@
 {
   "name": "@pamfilico/uicomponents",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Reusable UI components for Material UI and other frameworks",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -34,6 +34,11 @@
       "types": "./dist/material/hero/index.d.ts",
       "import": "./dist/material/hero/index.js",
       "require": "./dist/material/hero/index.js"
+    },
+    "./material/music": {
+      "types": "./dist/material/music/index.d.ts",
+      "import": "./dist/material/music/index.js",
+      "require": "./dist/material/music/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
@@ -102,6 +107,12 @@
     ]
   },
   "dependencies": {
+    "@blocknote/core": "^0.40.0",
+    "@blocknote/mantine": "^0.40.0",
+    "@blocknote/react": "^0.40.0",
+    "@mantine/core": "^7.17.8",
+    "@mantine/hooks": "^7.17.8",
+    "@tiptap/extensions": "^3.6.6",
     "react-markdown": "^10.1.0"
   }
 }
