@@ -5,4 +5,5 @@ export * from "./material/auth";
 export * from "./material/dialogs";
 export * from "./material/header";
 export * from "./material/home";
+export * from "./material/music";
 export * from "./utils";
