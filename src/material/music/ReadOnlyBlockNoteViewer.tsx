@@ -66,7 +66,7 @@ const useChordSchema = () =>
     []
   );
 
-interface ReadOnlyBlockNoteViewerProps {
+export interface ReadOnlyBlockNoteViewerProps {
   /**
    * BlockNote JSON content to display
    */
@@ -201,11 +201,17 @@ const ReadOnlyBlockNoteViewer: React.FC<ReadOnlyBlockNoteViewerProps> = ({
           backgroundColor: isDarkMode ? '#1a1a1a' : undefined,
         },
         '& .bn-editor': {
-          backgroundColor: isDarkMode ? '#1a1a1a' : undefined,
-          color: isDarkMode ? '#e0e0e0' : undefined,
+          ...(isDarkMode && {
+            backgroundColor: '#1a1a1a',
+            color: '#e0e0e0',
+          }),
+          cursor: 'default !important',
         },
         '& .bn-block': {
-          color: isDarkMode ? '#e0e0e0' : undefined,
+          ...(isDarkMode && {
+            color: '#e0e0e0',
+          }),
+          pointerEvents: 'none !important',
         },
         // Hide all interactive elements for read-only mode
         '& .bn-side-menu': {
@@ -220,13 +226,6 @@ const ReadOnlyBlockNoteViewer: React.FC<ReadOnlyBlockNoteViewerProps> = ({
         // Make content truly read-only
         '& .bn-editor *': {
           userSelect: 'text !important',
-          pointerEvents: 'none !important',
-        },
-        '& .bn-editor': {
-          cursor: 'default !important',
-        },
-        // Allow text selection but prevent editing
-        '& .bn-block': {
           pointerEvents: 'none !important',
         },
       }}

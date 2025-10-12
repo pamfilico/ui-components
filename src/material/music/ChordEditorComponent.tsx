@@ -15,7 +15,6 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import {
   BlockNoteSchema,
   defaultInlineContentSpecs,
-  Block,
 } from "@blocknote/core";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
@@ -139,7 +138,7 @@ const useChordSchema = () =>
 // =============================
 // Main Chord Editor Component
 // =============================
-interface ChordEditorComponentProps {
+export interface ChordEditorComponentProps {
   initialContent?: any[];
   onContentChange?: (content: any) => void;
   isDarkMode?: boolean;
@@ -263,8 +262,8 @@ const ChordEditorComponent: React.FC<ChordEditorComponentProps> = ({
   const transposeAll = useCallback(
     (steps: number) => {
       const blocks = editor.document;
-      blocks.forEach((block: Block) => {
-        const c = (block as any).content;
+      (blocks as any[]).forEach((block: any) => {
+        const c = block.content;
         if (!Array.isArray(c)) return;
         const next: any[] = c.map((item: any) => {
           if (item && typeof item === "object" && item.type === "chord") {
@@ -292,22 +291,9 @@ const ChordEditorComponent: React.FC<ChordEditorComponentProps> = ({
     [insertChord]
   );
 
-  // Get the editor content as JSON
-  const getContent = useCallback(() => {
-    return editor.document;
-  }, [editor]);
-
-  // Expose methods via React imperative handle if needed
-  React.useImperativeHandle(
-    React.useRef(null),
-    () => ({
-      getContent,
-      transposeAll,
-      convertBracketChords,
-      insertChord,
-    }),
-    [getContent, transposeAll, convertBracketChords, insertChord]
-  );
+  // Note: Editor content is available via onContentChange callback
+  // To expose methods like getContent, transposeAll, etc. via ref,
+  // this component would need to use React.forwardRef
 
   return (
     <>

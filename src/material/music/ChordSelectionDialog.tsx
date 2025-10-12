@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 
-interface ChordSelectionDialogProps {
+export interface ChordSelectionDialogProps {
   open: boolean;
   onClose: () => void;
   onChordSelect: (chord: string) => void;

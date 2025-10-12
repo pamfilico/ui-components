@@ -372,6 +372,9 @@ export const StringifiedJSON: Story = {
 };
 
 export const Comparison: Story = {
+  args: {
+    content: [],
+  },
   render: (args) => {
     const sampleContent = [
       {
