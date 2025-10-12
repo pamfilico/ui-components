@@ -6,3 +6,6 @@ export type { ParsedChord, ChordEditorComponentProps } from "./ChordEditorCompon
 
 export { default as ReadOnlyBlockNoteViewer } from "./ReadOnlyBlockNoteViewer";
 export type { ReadOnlyBlockNoteViewerProps } from "./ReadOnlyBlockNoteViewer";
+
+// Export utils for convenience
+export * from "./utils";

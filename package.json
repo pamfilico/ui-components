@@ -40,6 +40,11 @@
       "import": "./dist/material/music/index.js",
       "require": "./dist/material/music/index.js"
     },
+    "./material/music/utils": {
+      "types": "./dist/material/music/utils.d.ts",
+      "import": "./dist/material/music/utils.js",
+      "require": "./dist/material/music/utils.js"
+    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js",
