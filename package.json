@@ -35,6 +35,11 @@
       "import": "./dist/material/hero/index.js",
       "require": "./dist/material/hero/index.js"
     },
+    "./material/music": {
+      "types": "./dist/material/music/index.d.ts",
+      "import": "./dist/material/music/index.js",
+      "require": "./dist/material/music/index.js"
+    },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js",
@@ -100,5 +105,13 @@
     "workerDirectory": [
       "public"
     ]
+  },
+  "dependencies": {
+    "@blocknote/core": "^0.40.0",
+    "@blocknote/mantine": "^0.40.0",
+    "@blocknote/react": "^0.40.0",
+    "@mantine/core": "^7.17.8",
+    "@mantine/hooks": "^7.17.8",
+    "@tiptap/extensions": "^3.6.6"
   }
 }
