@@ -350,6 +350,121 @@ function SongDisplay({ songContent }) {
 - `content`: BlockNote JSON content array
 - `isDarkMode`: Boolean to toggle dark/light theme
 
+#### SaveVersionComponent
+
+A component for transposing chord charts and saving them in different keys. Accepts a custom key select component as a prop for maximum flexibility.
+
+```tsx
+import { SaveVersionComponent, SelectItemServerVariant1 } from "@pamfilico/uicomponents/material/music";
+
+function SongVersionManager({ songId, songContent, originalKey }) {
+  const handleSave = (versionData) => {
+    console.log("Saving version:", versionData);
+    // Save to your API
+    fetch(`/api/songs/${songId}/versions`, {
+      method: "POST",
+      body: JSON.stringify(versionData.data)
+    });
+  };
+
+  // Create your custom key select component
+  const keySelectComponent = (
+    <SelectItemServerVariant1
+      valueItemId={null}
+      onChange={() => {}}
+      fetchOptions={async () => [
+        { id: "C", name: "C" },
+        { id: "D", name: "D" },
+        { id: "E", name: "E" },
+        { id: "F", name: "F" },
+        { id: "G", name: "G" },
+        { id: "A", name: "A" },
+        { id: "B", name: "B" },
+        // Add minor keys, sharps, flats...
+      ]}
+      label="Key"
+    />
+  );
+
+  return (
+    <SaveVersionComponent
+      songId={songId}
+      originalContent={songContent}
+      originalKey={originalKey}
+      keySelectComponent={keySelectComponent}
+      onSave={handleSave}
+      showControls={true}
+      tActions={(key) => key} // Optional: translation function
+      tLabels={(key) => key}  // Optional: translation function
+      tMessages={(key) => key} // Optional: translation function
+    />
+  );
+}
+```
+
+**Props:**
+- `songId`: String identifier for the song
+- `originalContent`: BlockNote JSON content array
+- `originalKey`: String representing the original key (e.g., "C", "Dm")
+- `keySelectComponent`: React element for key selection (required)
+- `onSave`: Callback function when version is saved `(versionData) => void`
+- `showControls`: Boolean to show/hide transpose controls (default: true)
+- `tActions`: Optional translation function for action strings
+- `tLabels`: Optional translation function for label strings
+- `tMessages`: Optional translation function for message strings
+- `className`: Optional CSS class name
+
+**Features:**
+- Live preview of transposed chord chart
+- Transpose up/down with visual feedback
+- Preview mode (read-only without controls)
+- Customizable key selection through prop injection
+- Internationalization support through translation functions
+
+#### SelectItemServerVariant1
+
+A generic autocomplete select component for server-side data fetching. Can be used for any dropdown that needs to fetch options from an API.
+
+```tsx
+import { SelectItemServerVariant1 } from "@pamfilico/uicomponents/material/music";
+
+function GenreSelector() {
+  const [selectedGenreId, setSelectedGenreId] = useState<string | null>(null);
+
+  const fetchGenres = async () => {
+    const response = await fetch("/api/genres");
+    const genres = await response.json();
+    return genres.map(g => ({ id: g.id, name: g.name }));
+  };
+
+  return (
+    <SelectItemServerVariant1
+      valueItemId={selectedGenreId}
+      onChange={setSelectedGenreId}
+      fetchOptions={fetchGenres}
+      label="Select Genre"
+      helperText="Choose a music genre"
+      disabled={false}
+    />
+  );
+}
+```
+
+**Props:**
+- `valueItemId`: Currently selected item ID (string | null | undefined)
+- `onChange`: Callback when selection changes `(itemId: string | null) => void`
+- `fetchOptions`: Async function that returns `Promise<SelectItemOption[]>`
+  - SelectItemOption: `{ id: string, name: string }`
+- `label`: Optional label for the select input
+- `helperText`: Optional helper text shown below the input
+- `disabled`: Optional boolean to disable the select
+
+**Use Cases:**
+- Key selection for music transposition
+- Genre/category selection
+- Artist/band selection
+- Any server-fetched dropdown options
+
 **Utility Functions:**
 
 The music package also exports utility functions for chord manipulation:
