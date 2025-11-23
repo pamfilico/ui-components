@@ -9,6 +9,8 @@ import {
   LinearProgress,
   useTheme,
   alpha,
+  Avatar,
+  AvatarGroup,
 } from "@mui/material";
 import { 
   DragIndicator as DragIcon,
@@ -298,17 +300,42 @@ export const TaskBar: React.FC<TaskBarProps> = ({
           >
             {task.name}
           </Typography>
-          {width > 150 && task.assignee && (
-            <Chip
-              label={task.assignee}
-              size="small"
+          {width > 100 && (task.assignees?.length || task.assignee) && (
+            <AvatarGroup 
+              max={width > 200 ? 4 : width > 150 ? 3 : 2}
               sx={{
-                height: 18,
-                fontSize: "0.7rem",
-                backgroundColor: alpha(theme.palette.background.paper, 0.2),
-                color: "inherit",
+                marginLeft: "auto",
+                marginRight: 1,
+                '& .MuiAvatar-root': {
+                  width: 20,
+                  height: 20,
+                  fontSize: "0.7rem",
+                  backgroundColor: alpha(theme.palette.primary.main, 0.7),
+                  border: `1px solid ${alpha(theme.palette.background.paper, 0.5)}`,
+                },
+                '& .MuiAvatarGroup-avatar': {
+                  width: 20,
+                  height: 20,
+                  fontSize: "0.65rem",
+                  backgroundColor: alpha(theme.palette.grey[700], 0.7),
+                }
               }}
-            />
+            >
+              {task.assignees && task.assignees.length > 0 ? (
+                task.assignees.map((assignee) => (
+                  <Avatar key={assignee} title={assignee}>
+                    {assignee.charAt(0).toUpperCase()}
+                  </Avatar>
+                ))
+              ) : (
+                /* Fallback to single assignee (legacy) */
+                task.assignee && (
+                  <Avatar title={task.assignee}>
+                    {task.assignee.charAt(0).toUpperCase()}
+                  </Avatar>
+                )
+              )}
+            </AvatarGroup>
           )}
           {/* Status dot indicator */}
           {width > 40 && (

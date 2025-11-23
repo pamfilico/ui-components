@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { GanttChart, type GanttTask } from "./GanttChart";
+import { GanttChart, type GanttTask, type DateRangeFilter } from "./GanttChart";
 import { useState } from "react";
 import { Box, Button, Stack, Paper, Typography } from "@mui/material";
 import { addDays, addHours, subDays } from "date-fns";
@@ -68,7 +68,7 @@ const projectTasks: GanttTask[] = [
     start_datetime: now.toISOString(),
     end_datetime: addDays(now, 3).toISOString(),
     progress: 100,
-    assignee: "Alice",
+    assignees: ["Alice", "Bob"],  // Multiple assignees
     color: "#4CAF50",
     priority: "high" as const,
     description: "Gather and document all project requirements",
@@ -116,7 +116,7 @@ const projectTasks: GanttTask[] = [
     start_datetime: addDays(now, 6).toISOString(),
     end_datetime: addDays(now, 15).toISOString(),
     progress: 40,
-    assignee: "Diana",
+    assignees: ["Diana", "Charlie", "Frank"],  // Multiple assignees
     color: "#9C27B0",
     priority: "medium" as const,
     description: "Implement user interface components",
@@ -128,7 +128,7 @@ const projectTasks: GanttTask[] = [
     start_datetime: addDays(now, 7).toISOString(),
     end_datetime: addDays(now, 16).toISOString(),
     progress: 35,
-    assignee: "Eric",
+    assignees: ["Eric", "Alice"],  // Multiple assignees
     color: "#00BCD4",
     priority: "high" as const,
     description: "Develop REST API endpoints",
@@ -188,7 +188,7 @@ const projectTasks: GanttTask[] = [
     start_datetime: addDays(now, 21).toISOString(),
     end_datetime: addDays(now, 22).toISOString(),
     progress: 0,
-    assignee: "DevOps Team",
+    assignees: ["Henry", "DevOps Team", "Alice", "Bob"],  // Multiple assignees
     color: "#F44336",
     priority: "high" as const,
     description: "Deploy to production",
@@ -264,6 +264,34 @@ export const NoGridNoDependencies: Story = {
     showGrid: false,
     showDependencies: false,
   },
+};
+
+export const DateRangeFilterStory = () => {
+  const [dateRangeFilter, setDateRangeFilter] = useState<DateRangeFilter | null>(null);
+  
+  return (
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <Paper sx={{ p: 2 }}>
+        <Typography variant="h6">Gantt Chart with Date Range Filter</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Click "Date Range" button to filter tasks by date. Use quick presets or select custom dates.
+        </Typography>
+      </Paper>
+      <Box sx={{ flex: 1 }}>
+        <GanttChart
+          tasks={projectTasks}
+          dateRangeFilter={dateRangeFilter}
+          onDateRangeFilterChange={setDateRangeFilter}
+          height="100%"
+          viewMode="week"
+          showGrid={true}
+          showDependencies={true}
+          highlightWeekends={true}
+          highlightToday={true}
+        />
+      </Box>
+    </Box>
+  );
 };
 
 export const AssigneeFilter = () => {

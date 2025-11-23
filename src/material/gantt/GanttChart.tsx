@@ -35,8 +35,8 @@ import {
   FilterList as FilterIcon,
   Search as SearchIcon,
   Close as CloseIcon,
-  Person as PersonIcon,
   Groups as GroupsIcon,
+  CalendarToday as CalendarIcon,
 } from "@mui/icons-material";
 import {
   format,
@@ -55,6 +55,12 @@ import {
   eachMonthOfInterval,
   isWeekend,
   isSameDay,
+  isWithinInterval,
+  isBefore,
+  isAfter,
+  addWeeks,
+  addMonths,
+  addQuarters,
 } from "date-fns";
 import { TaskBar } from "./TaskBar";
 import { MilestoneMarker } from "./MilestoneMarker";
@@ -64,6 +70,14 @@ export type PriorityFilter = "all" | "low" | "medium" | "high";
 export type StatusFilter = "all" | "not_started" | "in_progress" | "overdue" | "completed";
 export type TaskStatus = "not_started" | "in_progress" | "overdue" | "completed";
 
+export interface DateRangeFilter {
+  startDate: Date | null;
+  endDate: Date | null;
+  includeStarting: boolean;
+  includeEnding: boolean;
+  includeOverlapping: boolean;
+}
+
 export type MilestoneType = "delivery" | "review" | "approval";
 
 export interface GanttTask {
@@ -72,7 +86,8 @@ export interface GanttTask {
   start_datetime: string;
   end_datetime: string;
   progress?: number;
-  assignee?: string;
+  assignee?: string; // Deprecated - use assignees instead
+  assignees?: string[]; // Multiple assignees support
   color?: string;
   dependencies?: string[];
   description?: string;
@@ -116,6 +131,8 @@ export interface GanttChartProps {
   onStatusFilterChange?: (value: StatusFilter) => void;
   assigneeFilter?: string[];
   onAssigneeFilterChange?: (assignees: string[]) => void;
+  dateRangeFilter?: DateRangeFilter | null;
+  onDateRangeFilterChange?: (filter: DateRangeFilter | null) => void;
 }
 
 export const TASK_HEIGHT = 36;
@@ -219,6 +236,8 @@ export function GanttChart({
   onStatusFilterChange,
   assigneeFilter: initialAssigneeFilter = [],
   onAssigneeFilterChange,
+  dateRangeFilter: initialDateRangeFilter = null,
+  onDateRangeFilterChange,
 }: GanttChartProps) {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -234,6 +253,15 @@ export function GanttChart({
   const [assigneeFilter, setAssigneeFilter] = useState<string[]>(initialAssigneeFilter);
   const [assigneeFilterAnchor, setAssigneeFilterAnchor] = useState<null | HTMLElement>(null);
   const [assigneeSearch, setAssigneeSearch] = useState("");
+  const [dateRangeFilter, setDateRangeFilter] = useState<DateRangeFilter | null>(initialDateRangeFilter);
+  const [dateRangeAnchor, setDateRangeAnchor] = useState<null | HTMLElement>(null);
+  const [tempDateRange, setTempDateRange] = useState<DateRangeFilter>({
+    startDate: null,
+    endDate: null,
+    includeStarting: true,
+    includeEnding: true,
+    includeOverlapping: true,
+  });
 
   const columnWidth = COLUMN_WIDTH[viewMode];
   
@@ -241,7 +269,10 @@ export function GanttChart({
   const allAssignees = useMemo(() => {
     const assignees = new Set<string>();
     tasks.forEach(task => {
-      if (task.assignee) {
+      // Support both single assignee (legacy) and multiple assignees
+      if (task.assignees && task.assignees.length > 0) {
+        task.assignees.forEach(a => assignees.add(a));
+      } else if (task.assignee) {
         assignees.add(task.assignee);
       }
     });
@@ -252,9 +283,14 @@ export function GanttChart({
   const assigneeTaskCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     allAssignees.forEach(assignee => {
-      counts[assignee] = tasks.filter(t => t.assignee === assignee).length;
+      counts[assignee] = tasks.filter(t => {
+        if (t.assignees && t.assignees.length > 0) {
+          return t.assignees.includes(assignee);
+        }
+        return t.assignee === assignee;
+      }).length;
     });
-    counts["_unassigned"] = tasks.filter(t => !t.assignee).length;
+    counts["_unassigned"] = tasks.filter(t => !t.assignee && (!t.assignees || t.assignees.length === 0)).length;
     return counts;
   }, [tasks, allAssignees]);
 
@@ -283,15 +319,62 @@ export function GanttChart({
     // Filter by assignees
     if (assigneeFilter.length > 0) {
       filtered = filtered.filter(task => {
+        const hasNoAssignees = !task.assignee && (!task.assignees || task.assignees.length === 0);
+        
         if (assigneeFilter.includes("_unassigned")) {
-          return !task.assignee || assigneeFilter.includes(task.assignee);
+          if (hasNoAssignees) return true;
         }
-        return task.assignee && assigneeFilter.includes(task.assignee);
+        
+        // Check multiple assignees
+        if (task.assignees && task.assignees.length > 0) {
+          return task.assignees.some(a => assigneeFilter.includes(a));
+        }
+        // Fallback to single assignee (legacy)
+        if (task.assignee && assigneeFilter.includes(task.assignee)) {
+          return true;
+        }
+        
+        return false;
+      });
+    }
+    
+    // Filter by date range
+    if (dateRangeFilter && dateRangeFilter.startDate && dateRangeFilter.endDate) {
+      filtered = filtered.filter(task => {
+        const taskStart = parseISO(task.start_datetime);
+        const taskEnd = parseISO(task.end_datetime);
+        if (!isValid(taskStart) || !isValid(taskEnd)) return false;
+        
+        const rangeStart = dateRangeFilter.startDate!;
+        const rangeEnd = dateRangeFilter.endDate!;
+        
+        let matchesFilter = false;
+        
+        // Check if task starts within range
+        if (dateRangeFilter.includeStarting) {
+          matchesFilter = matchesFilter || isWithinInterval(taskStart, { start: rangeStart, end: rangeEnd });
+        }
+        
+        // Check if task ends within range
+        if (dateRangeFilter.includeEnding) {
+          matchesFilter = matchesFilter || isWithinInterval(taskEnd, { start: rangeStart, end: rangeEnd });
+        }
+        
+        // Check if task overlaps with range
+        if (dateRangeFilter.includeOverlapping) {
+          const taskOverlaps = (
+            (isBefore(taskStart, rangeEnd) || isSameDay(taskStart, rangeEnd)) &&
+            (isAfter(taskEnd, rangeStart) || isSameDay(taskEnd, rangeStart))
+          );
+          matchesFilter = matchesFilter || taskOverlaps;
+        }
+        
+        return matchesFilter;
       });
     }
     
     return filtered;
-  }, [tasks, hideCompleted, priorityFilter, statusFilter, assigneeFilter]);
+  }, [tasks, hideCompleted, priorityFilter, statusFilter, assigneeFilter, dateRangeFilter]);
 
   // Handle toggle for hide completed
   const handleHideCompletedChange = useCallback((value: boolean) => {
@@ -346,6 +429,67 @@ export function GanttChart({
       assignee.toLowerCase().includes(searchLower)
     );
   }, [allAssignees, assigneeSearch]);
+  
+  // Date range filter handlers
+  const handleDateRangeApply = useCallback(() => {
+    if (tempDateRange.startDate && tempDateRange.endDate) {
+      setDateRangeFilter(tempDateRange);
+      onDateRangeFilterChange?.(tempDateRange);
+    }
+    setDateRangeAnchor(null);
+  }, [tempDateRange, onDateRangeFilterChange]);
+  
+  const handleDateRangeClear = useCallback(() => {
+    setDateRangeFilter(null);
+    onDateRangeFilterChange?.(null);
+    setTempDateRange({
+      startDate: null,
+      endDate: null,
+      includeStarting: true,
+      includeEnding: true,
+      includeOverlapping: true,
+    });
+    setDateRangeAnchor(null);
+  }, [onDateRangeFilterChange]);
+  
+  const setQuickDateRange = useCallback((preset: string) => {
+    const today = new Date();
+    let start: Date;
+    let end: Date;
+    
+    switch (preset) {
+      case "thisWeek":
+        start = startOfWeek(today);
+        end = endOfWeek(today);
+        break;
+      case "next7Days":
+        start = today;
+        end = addDays(today, 7);
+        break;
+      case "thisMonth":
+        start = startOfMonth(today);
+        end = endOfMonth(today);
+        break;
+      case "nextQuarter":
+        start = today;
+        end = addQuarters(today, 1);
+        break;
+      default:
+        return;
+    }
+    
+    const range: DateRangeFilter = {
+      startDate: start,
+      endDate: end,
+      includeStarting: true,
+      includeEnding: true,
+      includeOverlapping: true,
+    };
+    
+    setTempDateRange(range);
+    setDateRangeFilter(range);
+    onDateRangeFilterChange?.(range);
+  }, [onDateRangeFilterChange]);
 
   // Handle cascading updates when a parent task is moved
   const handleTaskUpdateWithDependencies = useCallback((taskId: string, updates: Partial<GanttTask>) => {
@@ -651,6 +795,16 @@ export function GanttChart({
             Assignees
           </Button>
           
+          <Button
+            variant={dateRangeFilter ? "contained" : "outlined"}
+            size="small"
+            startIcon={<CalendarIcon />}
+            onClick={(e) => setDateRangeAnchor(e.currentTarget)}
+            sx={{ textTransform: "none" }}
+          >
+            Date Range
+          </Button>
+          
           <Divider orientation="vertical" flexItem />
           
           <FormControlLabel
@@ -705,7 +859,7 @@ export function GanttChart({
             />
           </RadioGroup>
           
-          {(hideCompleted || priorityFilter !== "all" || statusFilter !== "all" || assigneeFilter.length > 0) && filteredTasks.length !== tasks.length && (
+          {(hideCompleted || priorityFilter !== "all" || statusFilter !== "all" || assigneeFilter.length > 0 || dateRangeFilter) && filteredTasks.length !== tasks.length && (
             <Typography variant="caption" color="text.secondary">
               Showing {filteredTasks.length} of {tasks.length} tasks
             </Typography>
@@ -752,7 +906,7 @@ export function GanttChart({
         </Stack>
         
         {/* Active filter chips */}
-        {assigneeFilter.length > 0 && (
+        {(assigneeFilter.length > 0 || dateRangeFilter) && (
           <Stack direction="row" spacing={1} sx={{ px: 2, py: 1, flexWrap: "wrap", gap: 1 }}>
             <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "center" }}>
               Filtered by:
@@ -767,7 +921,19 @@ export function GanttChart({
                 deleteIcon={<CloseIcon />}
               />
             ))}
-            <Button size="small" onClick={handleAssigneeClear} sx={{ textTransform: "none" }}>
+            {dateRangeFilter && dateRangeFilter.startDate && dateRangeFilter.endDate && (
+              <Chip
+                label={`${format(dateRangeFilter.startDate, "MMM d")} - ${format(dateRangeFilter.endDate, "MMM d")}`}
+                size="small"
+                icon={<CalendarIcon />}
+                onDelete={handleDateRangeClear}
+                deleteIcon={<CloseIcon />}
+              />
+            )}
+            <Button size="small" onClick={() => {
+              handleAssigneeClear();
+              if (dateRangeFilter) handleDateRangeClear();
+            }} sx={{ textTransform: "none" }}>
               Clear All
             </Button>
           </Stack>
@@ -800,12 +966,14 @@ export function GanttChart({
             value={assigneeSearch}
             onChange={(e) => setAssigneeSearch(e.target.value)}
             sx={{ mb: 2 }}
-            InputProps={{
+            slotProps={{
+              input: {
               startAdornment: (
                 <InputAdornment position="start">
                   <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
+              },
             }}
           />
           
@@ -872,6 +1040,132 @@ export function GanttChart({
             >
               Apply
             </Button>
+          </Stack>
+        </Box>
+      </Popover>
+      
+      {/* Date Range Filter Popover */}
+      <Popover
+        open={Boolean(dateRangeAnchor)}
+        anchorEl={dateRangeAnchor}
+        onClose={() => setDateRangeAnchor(null)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <Box sx={{ p: 2, width: 320 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Filter by Date Range
+          </Typography>
+          
+          <Stack spacing={2}>
+            <TextField
+              fullWidth
+              size="small"
+              label="From"
+              type="date"
+              value={tempDateRange.startDate ? format(tempDateRange.startDate, "yyyy-MM-dd") : ""}
+              onChange={(e) => setTempDateRange(prev => ({
+                ...prev,
+                startDate: e.target.value ? new Date(e.target.value) : null,
+              }))}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+            
+            <TextField
+              fullWidth
+              size="small"
+              label="To"
+              type="date"
+              value={tempDateRange.endDate ? format(tempDateRange.endDate, "yyyy-MM-dd") : ""}
+              onChange={(e) => setTempDateRange(prev => ({
+                ...prev,
+                endDate: e.target.value ? new Date(e.target.value) : null,
+              }))}
+              slotProps={{ inputLabel: { shrink: true } }}
+            />
+            
+            <Divider />
+            
+            <Typography variant="body2">Quick Filters:</Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap">
+              <Button size="small" onClick={() => setQuickDateRange("thisWeek")}>
+                This Week
+              </Button>
+              <Button size="small" onClick={() => setQuickDateRange("next7Days")}>
+                Next 7 Days
+              </Button>
+              <Button size="small" onClick={() => setQuickDateRange("thisMonth")}>
+                This Month
+              </Button>
+              <Button size="small" onClick={() => setQuickDateRange("nextQuarter")}>
+                Next Quarter
+              </Button>
+            </Stack>
+            
+            <Divider />
+            
+            <Typography variant="body2">Include tasks that:</Typography>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={tempDateRange.includeStarting}
+                  onChange={(e) => setTempDateRange(prev => ({
+                    ...prev,
+                    includeStarting: e.target.checked,
+                  }))}
+                />
+              }
+              label="Start in range"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={tempDateRange.includeEnding}
+                  onChange={(e) => setTempDateRange(prev => ({
+                    ...prev,
+                    includeEnding: e.target.checked,
+                  }))}
+                />
+              }
+              label="End in range"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  size="small"
+                  checked={tempDateRange.includeOverlapping}
+                  onChange={(e) => setTempDateRange(prev => ({
+                    ...prev,
+                    includeOverlapping: e.target.checked,
+                  }))}
+                />
+              }
+              label="Overlap with range"
+            />
+            
+            <Divider />
+            
+            <Stack direction="row" spacing={1} justifyContent="space-between">
+              <Button size="small" onClick={handleDateRangeClear}>
+                Clear
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
+                onClick={handleDateRangeApply}
+                disabled={!tempDateRange.startDate || !tempDateRange.endDate}
+              >
+                Apply
+              </Button>
+            </Stack>
           </Stack>
         </Box>
       </Popover>
