@@ -1,4 +1,6 @@
-export { GanttChart } from "./GanttChart";
-export type { GanttChartProps, GanttTask } from "./GanttChart";
-export { GanttChartVariant2 } from "./GanttChartVariant2";
-export type { GanttChartVariant2Props, ViewMode } from "./GanttChartVariant2";
+export { GanttChart, calculateTaskStatus } from "./GanttChart";
+export type { GanttChartProps, GanttTask, GanttMilestone, ViewMode, PriorityFilter, StatusFilter, TaskStatus, MilestoneType } from "./GanttChart";
+export { TaskBar } from "./TaskBar";
+export type { TaskBarProps } from "./TaskBar";
+export { MilestoneMarker } from "./MilestoneMarker";
+export type { MilestoneMarkerProps } from "./MilestoneMarker";
