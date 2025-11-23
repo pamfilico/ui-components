@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useState, useRef, useEffect } from "react";
+import React, { useCallback, useMemo, useState, useRef } from "react";
 import {
   Box,
   Paper,
@@ -14,7 +14,6 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Divider,
-  LinearProgress,
   Menu,
   MenuItem,
   Button,
@@ -22,12 +21,22 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
+  Popover,
+  Avatar,
+  Badge,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import {
   Today as TodayIcon,
   Link as LinkIcon,
   LinkOff as LinkOffIcon,
   MoreVert as MoreIcon,
+  FilterList as FilterIcon,
+  Search as SearchIcon,
+  Close as CloseIcon,
+  Person as PersonIcon,
+  Groups as GroupsIcon,
 } from "@mui/icons-material";
 import {
   format,
@@ -105,6 +114,8 @@ export interface GanttChartProps {
   onPriorityFilterChange?: (value: PriorityFilter) => void;
   statusFilter?: StatusFilter;
   onStatusFilterChange?: (value: StatusFilter) => void;
+  assigneeFilter?: string[];
+  onAssigneeFilterChange?: (assignees: string[]) => void;
 }
 
 export const TASK_HEIGHT = 36;
@@ -206,6 +217,8 @@ export function GanttChart({
   onPriorityFilterChange,
   statusFilter: initialStatusFilter = "all",
   onStatusFilterChange,
+  assigneeFilter: initialAssigneeFilter = [],
+  onAssigneeFilterChange,
 }: GanttChartProps) {
   const theme = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -218,10 +231,34 @@ export function GanttChart({
   const [hideCompleted, setHideCompleted] = useState(initialHideCompleted);
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>(initialPriorityFilter);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>(initialStatusFilter);
+  const [assigneeFilter, setAssigneeFilter] = useState<string[]>(initialAssigneeFilter);
+  const [assigneeFilterAnchor, setAssigneeFilterAnchor] = useState<null | HTMLElement>(null);
+  const [assigneeSearch, setAssigneeSearch] = useState("");
 
   const columnWidth = COLUMN_WIDTH[viewMode];
+  
+  // Get unique assignees from all tasks
+  const allAssignees = useMemo(() => {
+    const assignees = new Set<string>();
+    tasks.forEach(task => {
+      if (task.assignee) {
+        assignees.add(task.assignee);
+      }
+    });
+    return Array.from(assignees).sort();
+  }, [tasks]);
+  
+  // Count tasks per assignee
+  const assigneeTaskCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allAssignees.forEach(assignee => {
+      counts[assignee] = tasks.filter(t => t.assignee === assignee).length;
+    });
+    counts["_unassigned"] = tasks.filter(t => !t.assignee).length;
+    return counts;
+  }, [tasks, allAssignees]);
 
-  // Filter tasks based on completion status, priority, and status (exclude milestone tasks)
+  // Filter tasks based on completion status, priority, status, and assignees (exclude milestone tasks)
   const filteredTasks = useMemo(() => {
     let filtered = tasks.filter(task => !task.isMilestone);
     
@@ -243,8 +280,18 @@ export function GanttChart({
       });
     }
     
+    // Filter by assignees
+    if (assigneeFilter.length > 0) {
+      filtered = filtered.filter(task => {
+        if (assigneeFilter.includes("_unassigned")) {
+          return !task.assignee || assigneeFilter.includes(task.assignee);
+        }
+        return task.assignee && assigneeFilter.includes(task.assignee);
+      });
+    }
+    
     return filtered;
-  }, [tasks, hideCompleted, priorityFilter, statusFilter]);
+  }, [tasks, hideCompleted, priorityFilter, statusFilter, assigneeFilter]);
 
   // Handle toggle for hide completed
   const handleHideCompletedChange = useCallback((value: boolean) => {
@@ -263,6 +310,42 @@ export function GanttChart({
     setStatusFilter(value);
     onStatusFilterChange?.(value);
   }, [onStatusFilterChange]);
+  
+  // Handle assignee filter changes
+  const handleAssigneeToggle = useCallback((assignee: string) => {
+    setAssigneeFilter(prev => {
+      const newFilter = prev.includes(assignee)
+        ? prev.filter(a => a !== assignee)
+        : [...prev, assignee];
+      onAssigneeFilterChange?.(newFilter);
+      return newFilter;
+    });
+  }, [onAssigneeFilterChange]);
+  
+  const handleAssigneeSelectAll = useCallback(() => {
+    const allWithUnassigned = [...allAssignees, "_unassigned"];
+    setAssigneeFilter(allWithUnassigned);
+    onAssigneeFilterChange?.(allWithUnassigned);
+  }, [allAssignees, onAssigneeFilterChange]);
+  
+  const handleAssigneeClear = useCallback(() => {
+    setAssigneeFilter([]);
+    onAssigneeFilterChange?.([]);
+  }, [onAssigneeFilterChange]);
+  
+  const removeAssigneeFilter = useCallback((assignee: string) => {
+    const newFilter = assigneeFilter.filter(a => a !== assignee);
+    setAssigneeFilter(newFilter);
+    onAssigneeFilterChange?.(newFilter);
+  }, [assigneeFilter, onAssigneeFilterChange]);
+  
+  // Filtered assignees based on search
+  const filteredAssignees = useMemo(() => {
+    const searchLower = assigneeSearch.toLowerCase();
+    return allAssignees.filter(assignee => 
+      assignee.toLowerCase().includes(searchLower)
+    );
+  }, [allAssignees, assigneeSearch]);
 
   // Handle cascading updates when a parent task is moved
   const handleTaskUpdateWithDependencies = useCallback((taskId: string, updates: Partial<GanttTask>) => {
@@ -555,6 +638,21 @@ export function GanttChart({
           
           <Divider orientation="vertical" flexItem />
           
+          <Button
+            variant={assigneeFilter.length > 0 ? "contained" : "outlined"}
+            size="small"
+            startIcon={<FilterIcon />}
+            endIcon={assigneeFilter.length > 0 ? (
+              <Badge badgeContent={assigneeFilter.length} color="secondary" />
+            ) : null}
+            onClick={(e) => setAssigneeFilterAnchor(e.currentTarget)}
+            sx={{ textTransform: "none" }}
+          >
+            Assignees
+          </Button>
+          
+          <Divider orientation="vertical" flexItem />
+          
           <FormControlLabel
             control={
               <Checkbox
@@ -607,7 +705,7 @@ export function GanttChart({
             />
           </RadioGroup>
           
-          {(hideCompleted || priorityFilter !== "all" || statusFilter !== "all") && filteredTasks.length !== tasks.length && (
+          {(hideCompleted || priorityFilter !== "all" || statusFilter !== "all" || assigneeFilter.length > 0) && filteredTasks.length !== tasks.length && (
             <Typography variant="caption" color="text.secondary">
               Showing {filteredTasks.length} of {tasks.length} tasks
             </Typography>
@@ -652,7 +750,131 @@ export function GanttChart({
             </>
           )}
         </Stack>
+        
+        {/* Active filter chips */}
+        {assigneeFilter.length > 0 && (
+          <Stack direction="row" spacing={1} sx={{ px: 2, py: 1, flexWrap: "wrap", gap: 1 }}>
+            <Typography variant="caption" color="text.secondary" sx={{ alignSelf: "center" }}>
+              Filtered by:
+            </Typography>
+            {assigneeFilter.map(assignee => (
+              <Chip
+                key={assignee}
+                label={assignee === "_unassigned" ? "Unassigned" : assignee}
+                size="small"
+                avatar={assignee === "_unassigned" ? <GroupsIcon /> : <Avatar sx={{ width: 20, height: 20 }}>{assignee[0]}</Avatar>}
+                onDelete={() => removeAssigneeFilter(assignee)}
+                deleteIcon={<CloseIcon />}
+              />
+            ))}
+            <Button size="small" onClick={handleAssigneeClear} sx={{ textTransform: "none" }}>
+              Clear All
+            </Button>
+          </Stack>
+        )}
       </Paper>
+      
+      {/* Assignee Filter Popover */}
+      <Popover
+        open={Boolean(assigneeFilterAnchor)}
+        anchorEl={assigneeFilterAnchor}
+        onClose={() => setAssigneeFilterAnchor(null)}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <Box sx={{ p: 2, width: 300 }}>
+          <Typography variant="subtitle2" gutterBottom>
+            Filter by Assignee
+          </Typography>
+          
+          <TextField
+            fullWidth
+            size="small"
+            placeholder="Search assignees..."
+            value={assigneeSearch}
+            onChange={(e) => setAssigneeSearch(e.target.value)}
+            sx={{ mb: 2 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+          />
+          
+          <Box sx={{ maxHeight: 300, overflowY: "auto" }}>
+            {filteredAssignees.map(assignee => (
+              <FormControlLabel
+                key={assignee}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={assigneeFilter.includes(assignee)}
+                    onChange={() => handleAssigneeToggle(assignee)}
+                  />
+                }
+                label={
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Avatar sx={{ width: 24, height: 24 }}>{assignee[0]}</Avatar>
+                    <Typography variant="body2">{assignee}</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      ({assigneeTaskCounts[assignee]})
+                    </Typography>
+                  </Stack>
+                }
+                sx={{ width: "100%", m: 0, mb: 1 }}
+              />
+            ))}
+            
+            {assigneeTaskCounts["_unassigned"] > 0 && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={assigneeFilter.includes("_unassigned")}
+                    onChange={() => handleAssigneeToggle("_unassigned")}
+                  />
+                }
+                label={
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <GroupsIcon sx={{ width: 24, height: 24 }} />
+                    <Typography variant="body2">Unassigned</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      ({assigneeTaskCounts["_unassigned"]})
+                    </Typography>
+                  </Stack>
+                }
+                sx={{ width: "100%", m: 0 }}
+              />
+            )}
+          </Box>
+          
+          <Divider sx={{ my: 2 }} />
+          
+          <Stack direction="row" spacing={1} justifyContent="space-between">
+            <Button size="small" onClick={handleAssigneeSelectAll}>
+              Select All
+            </Button>
+            <Button size="small" onClick={handleAssigneeClear}>
+              Clear
+            </Button>
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => setAssigneeFilterAnchor(null)}
+            >
+              Apply
+            </Button>
+          </Stack>
+        </Box>
+      </Popover>
       
       <Box
         ref={containerRef}
@@ -728,7 +950,7 @@ export function GanttChart({
                 pointerEvents: "auto",
               }}
             >
-              {milestonePositions.map((milestone, index) => (
+              {milestonePositions.map((milestone) => (
                 <MilestoneMarker
                   key={milestone.id}
                   milestone={milestone}

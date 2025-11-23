@@ -266,6 +266,34 @@ export const NoGridNoDependencies: Story = {
   },
 };
 
+export const AssigneeFilter = () => {
+  const [assigneeFilter, setAssigneeFilter] = useState<string[]>([]);
+  
+  return (
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <Paper sx={{ p: 2 }}>
+        <Typography variant="h6">Gantt Chart with Assignee Filter</Typography>
+        <Typography variant="body2" color="text.secondary">
+          Click "Assignees" button to filter tasks by team members. Select multiple people to see their tasks.
+        </Typography>
+      </Paper>
+      <Box sx={{ flex: 1 }}>
+        <GanttChart
+          tasks={projectTasks}
+          assigneeFilter={assigneeFilter}
+          onAssigneeFilterChange={setAssigneeFilter}
+          height="100%"
+          viewMode="week"
+          showGrid={true}
+          showDependencies={true}
+          highlightWeekends={true}
+          highlightToday={true}
+        />
+      </Box>
+    </Box>
+  );
+};
+
 export const InteractiveWithMilestones = () => {
   const [tasks, setTasks] = useState<GanttTask[]>(projectTasks);
   const [milestones, setMilestones] = useState([
