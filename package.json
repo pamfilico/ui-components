@@ -35,6 +35,11 @@
       "import": "./dist/material/hero/index.js",
       "require": "./dist/material/hero/index.js"
     },
+    "./material/gantt": {
+      "types": "./dist/material/gantt/index.d.ts",
+      "import": "./dist/material/gantt/index.js",
+      "require": "./dist/material/gantt/index.js"
+    },
     "./material/music": {
       "types": "./dist/material/music/index.d.ts",
       "import": "./dist/material/music/index.js",
@@ -124,7 +129,11 @@
     "@mantine/core": "^7.17.8",
     "@mantine/hooks": "^7.17.8",
     "@tiptap/extensions": "^3.6.6",
+    "date-fns": "^4.1.0",
     "qrcode": "^1.5.4",
-    "react-markdown": "^10.1.0"
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-markdown": "^10.1.0",
+    "reactflow": "^11.11.4"
   }
 }
