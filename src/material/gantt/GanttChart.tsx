@@ -26,6 +26,12 @@ import {
   Badge,
   TextField,
   InputAdornment,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemIcon,
+  Collapse,
 } from "@mui/material";
 import {
   Today as TodayIcon,
@@ -37,6 +43,10 @@ import {
   Close as CloseIcon,
   Groups as GroupsIcon,
   CalendarToday as CalendarIcon,
+  UnfoldMore as ExpandAllIcon,
+  UnfoldLess as CollapseAllIcon,
+  KeyboardArrowRight as CollapsedIcon,
+  KeyboardArrowDown as ExpandedIcon,
 } from "@mui/icons-material";
 import {
   format,
@@ -64,6 +74,7 @@ import {
 } from "date-fns";
 import { TaskBar } from "./TaskBar";
 import { MilestoneMarker } from "./MilestoneMarker";
+import { TaskSidebar } from "./TaskSidebar";
 
 export type ViewMode = "day" | "week" | "month";
 export type PriorityFilter = "all" | "low" | "medium" | "high";
@@ -94,6 +105,11 @@ export interface GanttTask {
   priority?: "low" | "medium" | "high";
   isMilestone?: boolean;
   milestoneType?: MilestoneType;
+  // Hierarchy support
+  parentId?: string;
+  children?: string[];
+  level?: number;
+  isExpanded?: boolean;
 }
 
 export interface GanttMilestone {
@@ -137,6 +153,7 @@ export interface GanttChartProps {
 
 export const TASK_HEIGHT = 36;
 const TIMELINE_HEIGHT = 50;
+const SIDEBAR_WIDTH = 300;
 const COLUMN_WIDTH = {
   day: 80,
   week: 120,
@@ -262,6 +279,10 @@ export function GanttChart({
     includeEnding: true,
     includeOverlapping: true,
   });
+  
+  // Hierarchy state
+  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
+  const [expandLevel, setExpandLevel] = useState<number | null>(null);
 
   const columnWidth = COLUMN_WIDTH[viewMode];
   
@@ -294,9 +315,73 @@ export function GanttChart({
     return counts;
   }, [tasks, allAssignees]);
 
+  // Process hierarchy - build parent-child relationships and calculate visibility
+  const { visibleTasks, taskHierarchy } = useMemo(() => {
+    // Build hierarchy map
+    const hierarchyMap = new Map<string, GanttTask[]>();
+    const taskMap = new Map<string, GanttTask>();
+    
+    tasks.forEach(task => {
+      taskMap.set(task.id, task);
+      if (task.parentId) {
+        const siblings = hierarchyMap.get(task.parentId) || [];
+        siblings.push(task);
+        hierarchyMap.set(task.parentId, siblings);
+      }
+    });
+    
+    // Calculate task levels
+    const calculateLevel = (taskId: string, visited = new Set<string>()): number => {
+      if (visited.has(taskId)) return 0;
+      visited.add(taskId);
+      
+      const task = taskMap.get(taskId);
+      if (!task || !task.parentId) return 0;
+      
+      return 1 + calculateLevel(task.parentId, visited);
+    };
+    
+    // Determine which tasks are visible based on expansion state
+    const visibleTaskIds = new Set<string>();
+    const processTask = (taskId: string, parentExpanded = true) => {
+      const task = taskMap.get(taskId);
+      if (!task) return;
+      
+      // Add task if parent is expanded or it's a root task
+      if (parentExpanded) {
+        visibleTaskIds.add(taskId);
+      }
+      
+      // Process children if this task is expanded
+      const isExpanded = expandedTasks.has(taskId);
+      const children = hierarchyMap.get(taskId) || [];
+      children.forEach(child => {
+        processTask(child.id, parentExpanded && isExpanded);
+      });
+    };
+    
+    // Process all root tasks (tasks without parents)
+    tasks.forEach(task => {
+      if (!task.parentId) {
+        processTask(task.id);
+      }
+    });
+    
+    // Filter to visible tasks and add calculated levels
+    const visible = tasks
+      .filter(task => visibleTaskIds.has(task.id))
+      .map(task => ({
+        ...task,
+        level: calculateLevel(task.id),
+        children: hierarchyMap.get(task.id)?.map(c => c.id) || []
+      }));
+    
+    return { visibleTasks: visible, taskHierarchy: hierarchyMap };
+  }, [tasks, expandedTasks]);
+
   // Filter tasks based on completion status, priority, status, and assignees (exclude milestone tasks)
   const filteredTasks = useMemo(() => {
-    let filtered = tasks.filter(task => !task.isMilestone);
+    let filtered = visibleTasks.filter(task => !task.isMilestone);
     
     // Filter by completion status
     if (hideCompleted) {
@@ -374,7 +459,7 @@ export function GanttChart({
     }
     
     return filtered;
-  }, [tasks, hideCompleted, priorityFilter, statusFilter, assigneeFilter, dateRangeFilter]);
+  }, [visibleTasks, hideCompleted, priorityFilter, statusFilter, assigneeFilter, dateRangeFilter]);
 
   // Handle toggle for hide completed
   const handleHideCompletedChange = useCallback((value: boolean) => {
@@ -429,6 +514,45 @@ export function GanttChart({
       assignee.toLowerCase().includes(searchLower)
     );
   }, [allAssignees, assigneeSearch]);
+  
+  // Hierarchy handlers
+  const handleToggleExpand = useCallback((taskId: string) => {
+    setExpandedTasks(prev => {
+      const next = new Set(prev);
+      if (next.has(taskId)) {
+        next.delete(taskId);
+      } else {
+        next.add(taskId);
+      }
+      return next;
+    });
+  }, []);
+  
+  const handleExpandAll = useCallback(() => {
+    const allParentIds = new Set<string>();
+    tasks.forEach(task => {
+      if (task.children && task.children.length > 0) {
+        allParentIds.add(task.id);
+      }
+    });
+    setExpandedTasks(allParentIds);
+  }, [tasks]);
+  
+  const handleCollapseAll = useCallback(() => {
+    setExpandedTasks(new Set());
+  }, []);
+  
+  const handleExpandToLevel = useCallback((level: number) => {
+    const expandIds = new Set<string>();
+    tasks.forEach(task => {
+      const taskLevel = task.level || 0;
+      if (taskLevel < level && task.children && task.children.length > 0) {
+        expandIds.add(task.id);
+      }
+    });
+    setExpandedTasks(expandIds);
+    setExpandLevel(level);
+  }, [tasks]);
   
   // Date range filter handlers
   const handleDateRangeApply = useCallback(() => {
@@ -1170,15 +1294,28 @@ export function GanttChart({
         </Box>
       </Popover>
       
-      <Box
-        ref={containerRef}
-        sx={{
-          flex: 1,
-          position: "relative",
-          overflow: "auto",
-          backgroundColor: theme.palette.background.default,
-        }}
-      >
+      {/* Main content area with sidebar and chart */}
+      <Box sx={{ flex: 1, display: "flex", overflow: "hidden" }}>
+        {/* Task sidebar */}
+        <TaskSidebar
+          tasks={tasks}
+          expandedTasks={expandedTasks}
+          onToggleExpand={handleToggleExpand}
+          selectedTaskId={selectedTaskId}
+          onTaskClick={handleTaskClick}
+          width={SIDEBAR_WIDTH}
+        />
+        
+        {/* Gantt chart area */}
+        <Box
+          ref={containerRef}
+          sx={{
+            flex: 1,
+            position: "relative",
+            overflow: "auto",
+            backgroundColor: theme.palette.background.default,
+          }}
+        >
         <Box
           sx={{
             position: "sticky",
@@ -1410,6 +1547,7 @@ export function GanttChart({
             );
           })}
         </Box>
+      </Box>
       </Box>
     </Box>
   );
