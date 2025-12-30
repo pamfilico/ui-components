@@ -237,7 +237,7 @@ export function GanttChart({
   onTaskClick,
   onMilestoneClick,
   onMilestoneUpdate,
-  height = 600,
+  height = "100vh",
   readOnly = false,
   viewMode: initialViewMode = "week",
   showGrid = true,
